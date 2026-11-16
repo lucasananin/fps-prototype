@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 namespace FPS
 {
-    [RequireComponent(typeof(Rigidbody))]
+    [RequireComponent(typeof(CharacterController))]
     public class PlayerMovement : MonoBehaviour
     {
         [Header("References")]
@@ -23,87 +23,72 @@ namespace FPS
 
         [Header("Jump")]
         [SerializeField, Min(1)] private int _maxJumps = 2;
-        [SerializeField] private float _jumpForce = 7f;
+        [SerializeField, Min(0.1f)] private float _jumpHeight = 2f;
+        [SerializeField, Min(0.1f)] private float _gravity = 25f;
+        [SerializeField, Min(1f)] private float _fallMultiplier = 2f;
+        [SerializeField, Min(1f)] private float _jumpReleaseGravityMultiplier = 2.5f;
         [SerializeField] private float _coyoteTime = 0.12f;
         [SerializeField] private float _jumpBufferTime = 0.15f;
 
-        [Header("Ground Detection")]
-        [SerializeField] private Transform _groundCheck;
-        [SerializeField] private float _groundCheckRadius = 0.2f;
-        [SerializeField] private LayerMask _groundLayers;
-
-        private Rigidbody _rigidbody;
+        private CharacterController _controller;
 
         private Vector3 _moveDirection;
+        private Vector3 _horizontalVelocity;
 
-        private bool _isGrounded;
-        private bool _hasJumpedSinceGround;
-
-        private int _jumpsRemaining;
+        private float _verticalVelocity;
 
         private float _coyoteTimeCounter;
         private float _jumpBufferCounter;
 
+        private int _jumpsRemaining;
+
+        private bool _isGrounded;
+        private bool _hasJumpedSinceGround;
+
         public bool IsGrounded => _isGrounded;
         public int JumpsRemaining => _jumpsRemaining;
-        public Vector3 Velocity => _rigidbody.linearVelocity;
+        public Vector3 Velocity => _horizontalVelocity + Vector3.up * _verticalVelocity;
 
         private void Awake()
         {
-            _rigidbody = GetComponent<Rigidbody>();
-
-            _rigidbody.freezeRotation = true;
+            _controller = GetComponent<CharacterController>();
 
             _jumpsRemaining = _maxJumps;
         }
 
         private void Update()
         {
+            float deltaTime = Time.deltaTime;
+
+            CheckGround();
             CalculateMovement();
 
-            if (_playerInput.ConsumeJumpPressed())
-            {
-                _jumpBufferCounter = _jumpBufferTime;
-            }
+            HandleJumpInput(deltaTime);
+            HandleJump();
+            UpdateVerticalVelocity(deltaTime);
+            ApplyHorizontalMovement(deltaTime);
+            ApplyMovement(deltaTime);
         }
 
-        private void FixedUpdate()
+        private void CheckGround()
         {
-            CheckGround();
+            _isGrounded = _controller.isGrounded;
 
             if (_isGrounded)
             {
                 _coyoteTimeCounter = _coyoteTime;
                 _jumpsRemaining = _maxJumps;
                 _hasJumpedSinceGround = false;
-            }
 
-            HandleJump();
-            UpdateCoyoteTime();
-
-            if (_isGrounded)
-            {
-                ApplyGroundMovement();
+                if (_verticalVelocity < 0f)
+                {
+                    _verticalVelocity = -2f;
+                }
             }
             else
             {
-                ApplyAirMovement();
+                UpdateCoyoteTime(Time.deltaTime);
             }
-
-            UpdateJumpBuffer();
-        }
-
-        private void CheckGround()
-        {
-            bool touchingGround = Physics.CheckSphere(
-                _groundCheck.position,
-                _groundCheckRadius,
-                _groundLayers,
-                QueryTriggerInteraction.Ignore
-            );
-
-            _isGrounded = touchingGround &&
-                          _rigidbody.linearVelocity.y <= 0.01f;
         }
 
         private void CalculateMovement()
@@ -125,6 +110,18 @@ namespace FPS
             ).normalized;
         }
 
+        private void HandleJumpInput(float deltaTime)
+        {
+            if (_playerInput.ConsumeJumpPressed())
+            {
+                _jumpBufferCounter = _jumpBufferTime;
+            }
+            else if (_jumpBufferCounter > 0f)
+            {
+                _jumpBufferCounter -= deltaTime;
+            }
+        }
+
         private void HandleJump()
         {
             if (_jumpBufferCounter <= 0f)
@@ -142,11 +139,9 @@ namespace FPS
 
             _jumpsRemaining--;
 
-            Vector3 velocity = _rigidbody.linearVelocity;
-
-            velocity.y = _jumpForce;
-
-            _rigidbody.linearVelocity = velocity;
+            _verticalVelocity = Mathf.Sqrt(
+                2f * _gravity * _jumpHeight
+            );
 
             _isGrounded = false;
             _hasJumpedSinceGround = true;
@@ -155,19 +150,18 @@ namespace FPS
             _jumpBufferCounter = 0f;
         }
 
-        private void UpdateCoyoteTime()
+        private void UpdateCoyoteTime(float deltaTime)
         {
-            if (_isGrounded || _hasJumpedSinceGround)
+            if (_hasJumpedSinceGround)
                 return;
 
-            _coyoteTimeCounter -= Time.fixedDeltaTime;
+            _coyoteTimeCounter -= deltaTime;
 
             if (_coyoteTimeCounter <= 0f)
             {
                 _coyoteTimeCounter = 0f;
 
-                // The first jump opportunity expires.
-                // Remaining jumps are preserved.
+                // Expire the first jump opportunity.
                 _jumpsRemaining = Mathf.Max(
                     0,
                     _jumpsRemaining - 1
@@ -177,61 +171,60 @@ namespace FPS
             }
         }
 
-        private void UpdateJumpBuffer()
+        private void UpdateVerticalVelocity(float deltaTime)
         {
-            if (_jumpBufferCounter <= 0f)
+            if (_isGrounded && _verticalVelocity <= 0f)
                 return;
 
-            _jumpBufferCounter = Mathf.Max(
-                0f,
-                _jumpBufferCounter - Time.fixedDeltaTime
-            );
+            float gravityMultiplier = 1f;
+
+            if (_verticalVelocity < 0f)
+            {
+                gravityMultiplier = _fallMultiplier;
+            }
+            else if (!_playerInput.JumpHeld)
+            {
+                gravityMultiplier = _jumpReleaseGravityMultiplier;
+            }
+
+            _verticalVelocity -=
+                _gravity * gravityMultiplier * deltaTime;
         }
 
-        private void ApplyGroundMovement()
+        private void ApplyHorizontalMovement(float deltaTime)
         {
-            Vector3 velocity = _rigidbody.linearVelocity;
+            if (_isGrounded)
+            {
+                ApplyGroundMovement(deltaTime);
+            }
+            else
+            {
+                ApplyAirMovement(deltaTime);
+            }
+        }
 
-            Vector3 horizontalVelocity = new Vector3(
-                velocity.x,
-                0f,
-                velocity.z
-            );
-
+        private void ApplyGroundMovement(float deltaTime)
+        {
             Vector3 targetVelocity = _moveDirection * _moveSpeed;
 
             float acceleration = _moveDirection.sqrMagnitude > 0.01f
                 ? _groundAcceleration
                 : _groundDeceleration;
 
-            Vector3 newHorizontalVelocity = Vector3.MoveTowards(
-                horizontalVelocity,
+            _horizontalVelocity = Vector3.MoveTowards(
+                _horizontalVelocity,
                 targetVelocity,
-                acceleration * Time.fixedDeltaTime
-            );
-
-            _rigidbody.linearVelocity = new Vector3(
-                newHorizontalVelocity.x,
-                velocity.y,
-                newHorizontalVelocity.z
+                acceleration * deltaTime
             );
         }
 
-        private void ApplyAirMovement()
+        private void ApplyAirMovement(float deltaTime)
         {
             if (_moveDirection.sqrMagnitude < 0.01f)
                 return;
 
-            Vector3 velocity = _rigidbody.linearVelocity;
-
-            Vector3 horizontalVelocity = new Vector3(
-                velocity.x,
-                0f,
-                velocity.z
-            );
-
             float currentSpeed = Vector3.Dot(
-                horizontalVelocity,
+                _horizontalVelocity,
                 _moveDirection
             );
 
@@ -243,30 +236,35 @@ namespace FPS
             float acceleration = _airAcceleration * _airControl;
 
             float accelerationAmount = Mathf.Min(
-                acceleration * Time.fixedDeltaTime,
+                acceleration * deltaTime,
                 speedToAdd
             );
 
-            horizontalVelocity += _moveDirection * accelerationAmount;
-
-            _rigidbody.linearVelocity = new Vector3(
-                horizontalVelocity.x,
-                velocity.y,
-                horizontalVelocity.z
-            );
+            _horizontalVelocity +=
+                _moveDirection * accelerationAmount;
         }
 
-        private void OnDrawGizmosSelected()
+        private void ApplyMovement(float deltaTime)
         {
-            if (_groundCheck == null)
-                return;
+            Vector3 velocity = _horizontalVelocity +
+                               Vector3.up * _verticalVelocity;
 
-            Gizmos.color = _isGrounded ? Color.green : Color.red;
-
-            Gizmos.DrawWireSphere(
-                _groundCheck.position,
-                _groundCheckRadius
+            CollisionFlags collisionFlags = _controller.Move(
+                velocity * deltaTime
             );
+
+            if ((collisionFlags & CollisionFlags.Above) != 0 &&
+                _verticalVelocity > 0f)
+            {
+                _verticalVelocity = 0f;
+            }
+
+            _isGrounded = _controller.isGrounded;
+
+            if (_isGrounded && _verticalVelocity < 0f)
+            {
+                _verticalVelocity = -2f;
+            }
         }
     }
 }

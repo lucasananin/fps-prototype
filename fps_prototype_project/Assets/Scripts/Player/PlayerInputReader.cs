@@ -17,6 +17,7 @@ namespace FPS
         public Vector2 Move { get; private set; }
         public Vector2 LookInput { get; private set; }
         public bool IsLookInputFromMouse { get; private set; }
+        public bool JumpHeld { get; private set; }
 
         private void OnEnable()
         {
@@ -24,7 +25,8 @@ namespace FPS
             _lookAction.action.Enable();
             _jumpAction.action.Enable();
 
-            _jumpAction.action.performed += OnJump;
+            _jumpAction.action.performed += OnJumpPressed;
+            _jumpAction.action.canceled += OnJumpReleased;
         }
 
         private void OnDisable()
@@ -33,10 +35,12 @@ namespace FPS
             _lookAction.action.Disable();
             _jumpAction.action.Disable();
 
-            _jumpAction.action.performed -= OnJump;
+            _jumpAction.action.performed -= OnJumpPressed;
+            _jumpAction.action.canceled -= OnJumpReleased;
 
             Move = Vector2.zero;
             LookInput = Vector2.zero;
+            _jumpPressed = false;
             _jumpPressed = false;
         }
 
@@ -56,9 +60,15 @@ namespace FPS
             return pressed;
         }
 
-        private void OnJump(InputAction.CallbackContext context)
+        private void OnJumpPressed(InputAction.CallbackContext context)
         {
             _jumpPressed = true;
+            JumpHeld = true;
+        }
+
+        private void OnJumpReleased(InputAction.CallbackContext context)
+        {
+            JumpHeld = false;
         }
     }
 }

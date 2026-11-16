@@ -13,15 +13,8 @@ namespace FPS
         [SerializeField] private float _gamepadSensitivity = 100f;
         [SerializeField] private float _minPitch = -90f;
         [SerializeField] private float _maxPitch = 90f;
-
-        private Rigidbody _rigidbody;
         private float _yaw;
         private float _pitch;
-
-        private void Awake()
-        {
-            _rigidbody = GetComponent<Rigidbody>();
-        }
 
         private void Start()
         {
@@ -39,7 +32,7 @@ namespace FPS
 
         private void LateUpdate()
         {
-            _rigidbody.MoveRotation(Quaternion.Euler(0f, _yaw, 0f));
+            transform.rotation = Quaternion.Euler(0f, _yaw, 0f);
             _cameraPivot.localRotation = Quaternion.Euler(_pitch, 0f, 0f);
         }
 
