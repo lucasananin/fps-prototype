@@ -1,4 +1,6 @@
+
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace FPS
 {
@@ -17,10 +19,13 @@ namespace FPS
         [Header("Air Movement")]
         [SerializeField] private float _airAcceleration = 15f;
         [SerializeField] private float _airControl = 0.5f;
+        [SerializeField] private float _airSpeedLimit = 7f;
 
         [Header("Jump")]
-        [SerializeField] private int _maxJumps = 2;
+        [SerializeField, Min(1)] private int _maxJumps = 2;
         [SerializeField] private float _jumpForce = 7f;
+        [SerializeField] private float _coyoteTime = 0.12f;
+        [SerializeField] private float _jumpBufferTime = 0.15f;
 
         [Header("Ground Detection")]
         [SerializeField] private Transform _groundCheck;
@@ -32,9 +37,12 @@ namespace FPS
         private Vector3 _moveDirection;
 
         private bool _isGrounded;
-        private bool _jumpRequested;
+        private bool _hasJumpedSinceGround;
 
         private int _jumpsRemaining;
+
+        private float _coyoteTimeCounter;
+        private float _jumpBufferCounter;
 
         public bool IsGrounded => _isGrounded;
         public int JumpsRemaining => _jumpsRemaining;
@@ -55,7 +63,7 @@ namespace FPS
 
             if (_playerInput.ConsumeJumpPressed())
             {
-                _jumpRequested = true;
+                _jumpBufferCounter = _jumpBufferTime;
             }
         }
 
@@ -65,11 +73,24 @@ namespace FPS
 
             if (_isGrounded)
             {
+                _coyoteTimeCounter = _coyoteTime;
                 _jumpsRemaining = _maxJumps;
+                _hasJumpedSinceGround = false;
             }
 
             HandleJump();
-            ApplyMovement();
+            UpdateCoyoteTime();
+
+            if (_isGrounded)
+            {
+                ApplyGroundMovement();
+            }
+            else
+            {
+                ApplyAirMovement();
+            }
+
+            UpdateJumpBuffer();
         }
 
         private void CheckGround()
@@ -81,7 +102,6 @@ namespace FPS
                 QueryTriggerInteraction.Ignore
             );
 
-            // Prevent ground detection while moving upward.
             _isGrounded = touchingGround &&
                           _rigidbody.linearVelocity.y <= 0.01f;
         }
@@ -107,12 +127,17 @@ namespace FPS
 
         private void HandleJump()
         {
-            if (!_jumpRequested)
+            if (_jumpBufferCounter <= 0f)
                 return;
 
-            _jumpRequested = false;
-
             if (_jumpsRemaining <= 0)
+                return;
+
+            bool canJump = _isGrounded ||
+                           _coyoteTimeCounter > 0f ||
+                           _hasJumpedSinceGround;
+
+            if (!canJump)
                 return;
 
             _jumpsRemaining--;
@@ -124,13 +149,50 @@ namespace FPS
             _rigidbody.linearVelocity = velocity;
 
             _isGrounded = false;
+            _hasJumpedSinceGround = true;
+
+            _coyoteTimeCounter = 0f;
+            _jumpBufferCounter = 0f;
         }
 
-        private void ApplyMovement()
+        private void UpdateCoyoteTime()
+        {
+            if (_isGrounded || _hasJumpedSinceGround)
+                return;
+
+            _coyoteTimeCounter -= Time.fixedDeltaTime;
+
+            if (_coyoteTimeCounter <= 0f)
+            {
+                _coyoteTimeCounter = 0f;
+
+                // The first jump opportunity expires.
+                // Remaining jumps are preserved.
+                _jumpsRemaining = Mathf.Max(
+                    0,
+                    _jumpsRemaining - 1
+                );
+
+                _hasJumpedSinceGround = true;
+            }
+        }
+
+        private void UpdateJumpBuffer()
+        {
+            if (_jumpBufferCounter <= 0f)
+                return;
+
+            _jumpBufferCounter = Mathf.Max(
+                0f,
+                _jumpBufferCounter - Time.fixedDeltaTime
+            );
+        }
+
+        private void ApplyGroundMovement()
         {
             Vector3 velocity = _rigidbody.linearVelocity;
 
-            Vector3 currentHorizontalVelocity = new Vector3(
+            Vector3 horizontalVelocity = new Vector3(
                 velocity.x,
                 0f,
                 velocity.z
@@ -138,21 +200,12 @@ namespace FPS
 
             Vector3 targetVelocity = _moveDirection * _moveSpeed;
 
-            float acceleration;
-
-            if (_isGrounded)
-            {
-                acceleration = _moveDirection.sqrMagnitude > 0.01f
-                    ? _groundAcceleration
-                    : _groundDeceleration;
-            }
-            else
-            {
-                acceleration = _airAcceleration * _airControl;
-            }
+            float acceleration = _moveDirection.sqrMagnitude > 0.01f
+                ? _groundAcceleration
+                : _groundDeceleration;
 
             Vector3 newHorizontalVelocity = Vector3.MoveTowards(
-                currentHorizontalVelocity,
+                horizontalVelocity,
                 targetVelocity,
                 acceleration * Time.fixedDeltaTime
             );
@@ -161,6 +214,45 @@ namespace FPS
                 newHorizontalVelocity.x,
                 velocity.y,
                 newHorizontalVelocity.z
+            );
+        }
+
+        private void ApplyAirMovement()
+        {
+            if (_moveDirection.sqrMagnitude < 0.01f)
+                return;
+
+            Vector3 velocity = _rigidbody.linearVelocity;
+
+            Vector3 horizontalVelocity = new Vector3(
+                velocity.x,
+                0f,
+                velocity.z
+            );
+
+            float currentSpeed = Vector3.Dot(
+                horizontalVelocity,
+                _moveDirection
+            );
+
+            float speedToAdd = _airSpeedLimit - currentSpeed;
+
+            if (speedToAdd <= 0f)
+                return;
+
+            float acceleration = _airAcceleration * _airControl;
+
+            float accelerationAmount = Mathf.Min(
+                acceleration * Time.fixedDeltaTime,
+                speedToAdd
+            );
+
+            horizontalVelocity += _moveDirection * accelerationAmount;
+
+            _rigidbody.linearVelocity = new Vector3(
+                horizontalVelocity.x,
+                velocity.y,
+                horizontalVelocity.z
             );
         }
 
