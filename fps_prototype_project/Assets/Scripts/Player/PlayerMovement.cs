@@ -30,24 +30,48 @@ namespace FPS
         [SerializeField] private float _coyoteTime = 0.12f;
         [SerializeField] private float _jumpBufferTime = 0.15f;
 
+        [Header("Dash")]
+        [SerializeField, Min(0f)] private float _dashSpeed = 18f;
+        [SerializeField, Min(0.01f)] private float _dashDuration = 0.2f;
+        [SerializeField, Min(0f)] private float _dashCooldown = 0.8f;
+        [SerializeField] private bool _allowGroundDash = true;
+        [SerializeField] private bool _allowAirDash = true;
+        [SerializeField] private bool _dashUsesGravity;
+
+        [Header("Ground Detection")]
+        [SerializeField] private float _groundCheckRadius = 0.2f;
+        [SerializeField] private Transform _groundCheck;
+        [SerializeField] private LayerMask _groundLayers;
+
         private CharacterController _controller;
 
         private Vector3 _moveDirection;
         private Vector3 _horizontalVelocity;
+        private Vector3 _dashDirection;
 
         private float _verticalVelocity;
 
         private float _coyoteTimeCounter;
         private float _jumpBufferCounter;
 
+        private float _dashTimeRemaining;
+        private float _dashCooldownCounter;
+
         private int _jumpsRemaining;
 
         private bool _isGrounded;
         private bool _hasJumpedSinceGround;
+        private bool _isDashing;
 
         public bool IsGrounded => _isGrounded;
+        public bool IsDashing => _isDashing;
+
         public int JumpsRemaining => _jumpsRemaining;
-        public Vector3 Velocity => _horizontalVelocity + Vector3.up * _verticalVelocity;
+
+        public Vector3 Velocity =>
+            _horizontalVelocity + Vector3.up * _verticalVelocity;
+
+        public float DashCooldownRemaining => _dashCooldownCounter;
 
         private void Awake()
         {
@@ -64,8 +88,22 @@ namespace FPS
             CalculateMovement();
 
             HandleJumpInput(deltaTime);
+            UpdateDashCooldown(deltaTime);
+
+            if (!_isDashing)
+            {
+                HandleDashInput();
+            }
+
+            if (_isDashing)
+            {
+                ApplyDashMovement(deltaTime);
+                return;
+            }
+
             HandleJump();
             UpdateVerticalVelocity(deltaTime);
+
             ApplyHorizontalMovement(deltaTime);
             ApplyMovement(deltaTime);
         }
@@ -110,6 +148,8 @@ namespace FPS
             ).normalized;
         }
 
+        #region Jump
+
         private void HandleJumpInput(float deltaTime)
         {
             if (_playerInput.ConsumeJumpPressed())
@@ -118,7 +158,10 @@ namespace FPS
             }
             else if (_jumpBufferCounter > 0f)
             {
-                _jumpBufferCounter -= deltaTime;
+                _jumpBufferCounter = Mathf.Max(
+                    0f,
+                    _jumpBufferCounter - deltaTime
+                );
             }
         }
 
@@ -161,7 +204,6 @@ namespace FPS
             {
                 _coyoteTimeCounter = 0f;
 
-                // Expire the first jump opportunity.
                 _jumpsRemaining = Mathf.Max(
                     0,
                     _jumpsRemaining - 1
@@ -190,6 +232,115 @@ namespace FPS
             _verticalVelocity -=
                 _gravity * gravityMultiplier * deltaTime;
         }
+
+        #endregion
+
+        #region Dash
+
+        private void UpdateDashCooldown(float deltaTime)
+        {
+            if (_dashCooldownCounter <= 0f)
+                return;
+
+            _dashCooldownCounter = Mathf.Max(
+                0f,
+                _dashCooldownCounter - deltaTime
+            );
+        }
+
+        private void HandleDashInput()
+        {
+            if (!_playerInput.ConsumeDashPressed())
+                return;
+
+            if (_dashCooldownCounter > 0f)
+                return;
+
+            if (_isGrounded && !_allowGroundDash)
+                return;
+
+            if (!_isGrounded && !_allowAirDash)
+                return;
+
+            StartDash();
+        }
+
+        private void StartDash()
+        {
+            if (_moveDirection.sqrMagnitude > 0.01f)
+            {
+                _dashDirection = _moveDirection;
+            }
+            else
+            {
+                Vector3 forward = _orientation.forward;
+                forward.y = 0f;
+
+                _dashDirection = forward.normalized;
+            }
+
+            _isDashing = true;
+
+            _dashTimeRemaining = _dashDuration;
+            _dashCooldownCounter = _dashCooldown;
+
+            _horizontalVelocity = _dashDirection * _dashSpeed;
+        }
+
+        private void ApplyDashMovement(float deltaTime)
+        {
+            if (_dashUsesGravity)
+            {
+                UpdateVerticalVelocity(deltaTime);
+            }
+
+            Vector3 velocity = _dashDirection * _dashSpeed;
+
+            velocity.y = _verticalVelocity;
+
+            CollisionFlags collisionFlags = _controller.Move(
+                velocity * deltaTime
+            );
+
+            _dashTimeRemaining -= deltaTime;
+
+            bool hitWall = (collisionFlags & CollisionFlags.Sides) != 0;
+
+            bool hitCeiling = (collisionFlags & CollisionFlags.Above) != 0;
+
+            if (hitCeiling && _verticalVelocity > 0f)
+            {
+                _verticalVelocity = 0f;
+            }
+
+            _isGrounded = _controller.isGrounded;
+
+            if (_isGrounded && _verticalVelocity < 0f)
+            {
+                _verticalVelocity = -2f;
+            }
+
+            if (hitWall || _dashTimeRemaining <= 0f)
+            {
+                StopDash(hitWall);
+            }
+        }
+
+        private void StopDash(bool hitWall)
+        {
+            _isDashing = false;
+
+            _dashTimeRemaining = 0f;
+
+            if (hitWall)
+            {
+                _horizontalVelocity = Vector3.zero;
+            }
+        }
+
+        #endregion
+
+        #region Regular Movement
 
         private void ApplyHorizontalMovement(float deltaTime)
         {
@@ -259,12 +410,15 @@ namespace FPS
                 _verticalVelocity = 0f;
             }
 
-            _isGrounded = _controller.isGrounded;
-
-            if (_isGrounded && _verticalVelocity < 0f)
+            if ((collisionFlags & CollisionFlags.Below) != 0 &&
+                _verticalVelocity < 0f)
             {
                 _verticalVelocity = -2f;
             }
+
+            _isGrounded = _controller.isGrounded;
         }
+
+        #endregion
     }
 }
