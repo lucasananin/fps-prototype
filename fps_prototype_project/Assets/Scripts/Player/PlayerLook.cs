@@ -26,7 +26,6 @@ namespace FPS
         private void Start()
         {
             _yaw = transform.eulerAngles.y;
-
             _pitch = _cameraPivot.localEulerAngles.x;
 
             if (_pitch > 180f)
@@ -37,11 +36,6 @@ namespace FPS
         {
             HandleLook();
         }
-
-        //private void FixedUpdate()
-        //{
-        //    _rigidbody.MoveRotation(Quaternion.Euler(0f, _yaw, 0f));
-        //}
 
         private void LateUpdate()
         {
@@ -67,9 +61,6 @@ namespace FPS
                 _minPitch,
                 _maxPitch
             );
-
-            //transform.rotation = Quaternion.Euler(0f, _yaw, 0f);
-            //_cameraPivot.localRotation = Quaternion.Euler(_pitch, 0f, 0f);
         }
     }
 }

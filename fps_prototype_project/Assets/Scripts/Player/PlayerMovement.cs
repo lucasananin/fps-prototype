@@ -18,6 +18,10 @@ namespace FPS
         [SerializeField] private float _airAcceleration = 15f;
         [SerializeField] private float _airControl = 0.5f;
 
+        [Header("Jump")]
+        [SerializeField] private int _maxJumps = 2;
+        [SerializeField] private float _jumpForce = 7f;
+
         [Header("Ground Detection")]
         [SerializeField] private Transform _groundCheck;
         [SerializeField] private float _groundCheckRadius = 0.2f;
@@ -26,11 +30,14 @@ namespace FPS
         private Rigidbody _rigidbody;
 
         private Vector3 _moveDirection;
-        private Vector3 _horizontalVelocity;
 
         private bool _isGrounded;
+        private bool _jumpRequested;
+
+        private int _jumpsRemaining;
 
         public bool IsGrounded => _isGrounded;
+        public int JumpsRemaining => _jumpsRemaining;
         public Vector3 Velocity => _rigidbody.linearVelocity;
 
         private void Awake()
@@ -38,27 +45,45 @@ namespace FPS
             _rigidbody = GetComponent<Rigidbody>();
 
             _rigidbody.freezeRotation = true;
+
+            _jumpsRemaining = _maxJumps;
         }
 
         private void Update()
         {
-            CheckGround();
             CalculateMovement();
+
+            if (_playerInput.ConsumeJumpPressed())
+            {
+                _jumpRequested = true;
+            }
         }
 
         private void FixedUpdate()
         {
+            CheckGround();
+
+            if (_isGrounded)
+            {
+                _jumpsRemaining = _maxJumps;
+            }
+
+            HandleJump();
             ApplyMovement();
         }
 
         private void CheckGround()
         {
-            _isGrounded = Physics.CheckSphere(
+            bool touchingGround = Physics.CheckSphere(
                 _groundCheck.position,
                 _groundCheckRadius,
                 _groundLayers,
                 QueryTriggerInteraction.Ignore
             );
+
+            // Prevent ground detection while moving upward.
+            _isGrounded = touchingGround &&
+                          _rigidbody.linearVelocity.y <= 0.01f;
         }
 
         private void CalculateMovement()
@@ -74,7 +99,31 @@ namespace FPS
             forward.Normalize();
             right.Normalize();
 
-            _moveDirection = (forward * input.y + right * input.x).normalized;
+            _moveDirection = (
+                forward * input.y +
+                right * input.x
+            ).normalized;
+        }
+
+        private void HandleJump()
+        {
+            if (!_jumpRequested)
+                return;
+
+            _jumpRequested = false;
+
+            if (_jumpsRemaining <= 0)
+                return;
+
+            _jumpsRemaining--;
+
+            Vector3 velocity = _rigidbody.linearVelocity;
+
+            velocity.y = _jumpForce;
+
+            _rigidbody.linearVelocity = velocity;
+
+            _isGrounded = false;
         }
 
         private void ApplyMovement()
