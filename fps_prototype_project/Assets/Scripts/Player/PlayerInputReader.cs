@@ -12,7 +12,7 @@ namespace FPS
         [SerializeField] private InputActionReference _sprintAction;
         [SerializeField] private InputActionReference _dashAction;
         [SerializeField] private InputActionReference _crouchAction;
-        [SerializeField] private InputActionReference _slideAction;
+        //[SerializeField] private InputActionReference _slideAction;
 
         private bool _jumpPressed;
         private bool _dashPressed;
@@ -34,7 +34,7 @@ namespace FPS
             _sprintAction.action.Enable();
             _dashAction.action.Enable();
             _crouchAction.action.Enable();
-            _slideAction.action.Enable();
+            //_slideAction.action.Enable();
 
             _jumpAction.action.performed += OnJumpPressed;
             _jumpAction.action.canceled += OnJumpReleased;
@@ -48,7 +48,7 @@ namespace FPS
             _jumpAction.action.Disable();
             _dashAction.action.Disable();
             _crouchAction.action.Disable();
-            _slideAction.action.Disable();
+            //_slideAction.action.Disable();
 
             _jumpAction.action.performed -= OnJumpPressed;
             _jumpAction.action.canceled -= OnJumpReleased;
@@ -72,8 +72,8 @@ namespace FPS
             Move = _moveAction.action.ReadValue<Vector2>();
             SprintHeld = _sprintAction.action.IsPressed();
             CrouchHeld = _crouchAction.action.IsPressed();
-            _slidePressed = _slideAction.action.IsPressed();
-            SlideHeld = _slideAction.action.IsPressed();
+            //_slidePressed = _slideAction.action.IsPressed();
+            //SlideHeld = _slideAction.action.IsPressed();
         }
 
         public bool ConsumeJumpPressed()

@@ -137,11 +137,11 @@ namespace FPS
             //    HandleSlideInput();
             //}
 
-            //if (_isSliding)
-            //{
-            //    ApplySlideMovement(deltaTime);
-            //    return;
-            //}
+            if (_isSliding)
+            {
+                ApplySlideMovement(deltaTime);
+                return;
+            }
 
             //if (_isCrouched && !TryStandUp())
             //{
@@ -401,7 +401,16 @@ namespace FPS
 
             if (_playerInput.CrouchHeld)
             {
-                if (!_isCrouched)
+                if (_isCrouched)
+                {
+                    return;
+                }
+
+                if (CanStartSlide())
+                {
+                    StartSlide();
+                }
+                else
                 {
                     StartCrouch();
                 }
@@ -413,6 +422,36 @@ namespace FPS
             {
                 TryStandUp();
             }
+        }
+
+        private bool CanStartSlide()
+        {
+            if (!_isGrounded)
+            {
+                return false;
+            }
+
+            if (!_playerInput.SprintHeld)
+            {
+                return false;
+            }
+
+            if (_playerInput.Move.y <= 0.1f)
+            {
+                return false;
+            }
+
+            if (_slideCooldownCounter > 0f)
+            {
+                return false;
+            }
+
+            if (_horizontalVelocity.magnitude < _slideMinimumSpeed)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private void StartCrouch()
@@ -561,7 +600,10 @@ namespace FPS
 
             _isSliding = false;
 
-            TryStandUp();
+            if (!_playerInput.CrouchHeld)
+                TryStandUp();
+            else
+                StartCrouch();
         }
 
         private bool TryStandUp()
