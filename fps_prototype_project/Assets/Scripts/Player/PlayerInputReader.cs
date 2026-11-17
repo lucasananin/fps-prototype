@@ -9,6 +9,7 @@ namespace FPS
         [SerializeField] private InputActionReference _moveAction;
         [SerializeField] private InputActionReference _lookAction;
         [SerializeField] private InputActionReference _jumpAction;
+        [SerializeField] private InputActionReference _sprintAction;
         [SerializeField] private InputActionReference _dashAction;
 
         private bool _jumpPressed;
@@ -18,12 +19,14 @@ namespace FPS
         public Vector2 LookInput { get; private set; }
         public bool IsLookInputFromMouse { get; private set; }
         public bool JumpHeld { get; private set; }
+        public bool SprintHeld { get; private set; }
 
         private void OnEnable()
         {
             _moveAction.action.Enable();
             _lookAction.action.Enable();
             _jumpAction.action.Enable();
+            _sprintAction.action.Enable();
             _dashAction.action.Enable();
 
             _jumpAction.action.performed += OnJumpPressed;
@@ -51,10 +54,10 @@ namespace FPS
 
         private void Update()
         {
-            InputAction action = _lookAction.action;
             LookInput = _lookAction.action.ReadValue<Vector2>();
-            IsLookInputFromMouse = action.activeControl?.device is Mouse;
+            IsLookInputFromMouse = _lookAction.action.activeControl?.device is Mouse;
             Move = _moveAction.action.ReadValue<Vector2>();
+            SprintHeld = _sprintAction.action.IsPressed();
         }
 
         public bool ConsumeJumpPressed()

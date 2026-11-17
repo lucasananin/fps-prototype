@@ -16,6 +16,9 @@ namespace FPS
         [SerializeField] private float _groundAcceleration = 40f;
         [SerializeField] private float _groundDeceleration = 40f;
 
+        [Header("Sprint Movement")]
+        [SerializeField] private float _sprintSpeed = 10f;
+
         [Header("Air Movement")]
         [SerializeField] private float _airAcceleration = 15f;
         [SerializeField] private float _airControl = 0.5f;
@@ -64,8 +67,8 @@ namespace FPS
         private bool _isDashing;
 
         public bool IsGrounded => _isGrounded;
+        public bool IsSprinting { get; private set; }
         public bool IsDashing => _isDashing;
-
         public int JumpsRemaining => _jumpsRemaining;
 
         public Vector3 Velocity =>
@@ -106,6 +109,8 @@ namespace FPS
 
             ApplyHorizontalMovement(deltaTime);
             ApplyMovement(deltaTime);
+
+            Debug.Log($"{_controller.velocity}");
         }
 
         private void CheckGround()
@@ -354,11 +359,34 @@ namespace FPS
             }
         }
 
+        //private void ApplyGroundMovement(float deltaTime)
+        //{
+        //    Vector3 targetVelocity = _moveDirection * _moveSpeed;
+
+        //    float acceleration = _moveDirection.sqrMagnitude > 0.01f
+        //        ? _groundAcceleration
+        //        : _groundDeceleration;
+
+        //    _horizontalVelocity = Vector3.MoveTowards(
+        //        _horizontalVelocity,
+        //        targetVelocity,
+        //        acceleration * deltaTime
+        //    );
+        //}
+
         private void ApplyGroundMovement(float deltaTime)
         {
-            Vector3 targetVelocity = _moveDirection * _moveSpeed;
+            bool hasMovementInput = _moveDirection.sqrMagnitude > 0.01f;
 
-            float acceleration = _moveDirection.sqrMagnitude > 0.01f
+            IsSprinting = _playerInput.SprintHeld && hasMovementInput;
+
+            float targetSpeed = IsSprinting
+                ? _sprintSpeed
+                : _moveSpeed;
+
+            Vector3 targetVelocity = _moveDirection * targetSpeed;
+
+            float acceleration = hasMovementInput
                 ? _groundAcceleration
                 : _groundDeceleration;
 
