@@ -236,6 +236,12 @@ namespace FPS
                 2f * _gravity * _jumpHeight
             );
 
+            //if (_isCrouched)
+            //{
+            //    _verticalVelocity = Mathf.Sqrt(2f * _gravity * (_jumpHeight * 2f));
+            //    TryStandUp();
+            //}
+
             _isGrounded = false;
             _hasJumpedSinceGround = true;
 
@@ -480,25 +486,25 @@ namespace FPS
             }
         }
 
-        private void HandleSlideInput()
-        {
-            if (!_playerInput.ConsumeSlidePressed())
-            {
-                return;
-            }
+        //private void HandleSlideInput()
+        //{
+        //    if (!_playerInput.ConsumeSlidePressed())
+        //    {
+        //        return;
+        //    }
 
-            if (!_isGrounded || _slideCooldownCounter > 0f)
-            {
-                return;
-            }
+        //    if (!_isGrounded || _slideCooldownCounter > 0f)
+        //    {
+        //        return;
+        //    }
 
-            if (_horizontalVelocity.magnitude < _slideMinimumSpeed)
-            {
-                return;
-            }
+        //    if (_horizontalVelocity.magnitude < _slideMinimumSpeed)
+        //    {
+        //        return;
+        //    }
 
-            StartSlide();
-        }
+        //    StartSlide();
+        //}
 
         private void StartSlide()
         {
@@ -583,7 +589,7 @@ namespace FPS
                 !_isGrounded ||
                 _slideTimeRemaining <= 0f ||
                 _horizontalVelocity.magnitude <= _slideExitSpeed ||
-                !_playerInput.SlideHeld;
+                !_playerInput.CrouchHeld;
 
             if (shouldEndSlide)
             {

@@ -16,7 +16,7 @@ namespace FPS
 
         private bool _jumpPressed;
         private bool _dashPressed;
-        private bool _slidePressed;
+        //private bool _slidePressed;
 
         public Vector2 Move { get; private set; }
         public Vector2 LookInput { get; private set; }
@@ -24,7 +24,7 @@ namespace FPS
         public bool JumpHeld { get; private set; }
         public bool SprintHeld { get; private set; }
         public bool CrouchHeld { get; private set; }
-        public bool SlideHeld { get; private set; }
+        //public bool SlideHeld { get; private set; }
 
         private void OnEnable()
         {
@@ -58,11 +58,11 @@ namespace FPS
             LookInput = Vector2.zero;
             _jumpPressed = false;
             _dashPressed = false;
-            _slidePressed = false;
+            //_slidePressed = false;
             JumpHeld = false;
             SprintHeld = false;
             CrouchHeld = false;
-            SlideHeld = false;
+            //SlideHeld = false;
         }
 
         private void Update()
@@ -108,11 +108,11 @@ namespace FPS
             _dashPressed = true;
         }
 
-        public bool ConsumeSlidePressed()
-        {
-            bool pressed = _slidePressed;
-            _slidePressed = false;
-            return pressed;
-        }
+        //public bool ConsumeSlidePressed()
+        //{
+        //    bool pressed = _slidePressed;
+        //    _slidePressed = false;
+        //    return pressed;
+        //}
     }
 }
