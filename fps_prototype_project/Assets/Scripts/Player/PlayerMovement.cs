@@ -42,6 +42,7 @@ namespace FPS
         [SerializeField] private bool _dashUsesGravity;
 
         [Header("Slide")]
+        [SerializeField] private LayerMask _standCheckLayers = ~0;
         [SerializeField] private float _slideDuration = 0.8f;
         [SerializeField] private float _slideCooldown = 0.5f;
         [SerializeField] private float _slideFriction = 8f;
@@ -80,6 +81,7 @@ namespace FPS
         private float _originalControllerHeight;
         private Vector3 _originalControllerCenter;
         private bool _isSliding;
+        private bool _isCrouched;
 
         public bool IsGrounded => _isGrounded;
         public bool IsSprinting { get; private set; }
@@ -100,36 +102,6 @@ namespace FPS
 
             _jumpsRemaining = _maxJumps;
         }
-
-        //private void Update()
-        //{
-        //    float deltaTime = Time.deltaTime;
-
-        //    CheckGround();
-        //    CalculateMovement();
-
-        //    HandleJumpInput(deltaTime);
-        //    UpdateDashCooldown(deltaTime);
-
-        //    if (!_isDashing)
-        //    {
-        //        HandleDashInput();
-        //    }
-
-        //    if (_isDashing)
-        //    {
-        //        ApplyDashMovement(deltaTime);
-        //        return;
-        //    }
-
-        //    HandleJump();
-        //    UpdateVerticalVelocity(deltaTime);
-
-        //    ApplyHorizontalMovement(deltaTime);
-        //    ApplyMovement(deltaTime);
-
-        //    Debug.Log($"{_controller.velocity}");
-        //}
 
         private void Update()
         {
@@ -161,6 +133,13 @@ namespace FPS
             if (_isSliding)
             {
                 ApplySlideMovement(deltaTime);
+                return;
+            }
+
+            if (_isCrouched && !TryStandUp())
+            {
+                UpdateVerticalVelocity(deltaTime);
+                ApplyMovement(deltaTime);
                 return;
             }
 
@@ -436,19 +415,67 @@ namespace FPS
         private void StartSlide()
         {
             _isSliding = true;
+            _isCrouched = true;
 
             _slideTimeRemaining = _slideDuration;
             _slideCooldownCounter = _slideCooldown;
 
             IsSprinting = false;
 
-            _controller.height = _slideHeight;
+            SetControllerHeight(_slideHeight);
+        }
+
+        private void SetControllerHeight(float height)
+        {
+            height = Mathf.Max(height, _controller.radius * 2f);
+
+            float feetPosition = _originalControllerCenter.y -
+                                 _originalControllerHeight * 0.5f;
+
+            _controller.height = height;
 
             _controller.center = new Vector3(
                 _originalControllerCenter.x,
-                _slideCenterOffset,
+                feetPosition + height * 0.5f,
                 _originalControllerCenter.z
             );
+        }
+
+        private bool CanStandUp()
+        {
+            Vector3 worldCenter = transform.TransformPoint(_originalControllerCenter);
+
+            float scaleY = transform.lossyScale.y;
+            float scaleXZ = Mathf.Max(
+                transform.lossyScale.x,
+                transform.lossyScale.z
+            );
+
+            float radius = _controller.radius * scaleXZ;
+            float height = _originalControllerHeight * scaleY;
+
+            float halfSegment = Mathf.Max(0f, height * 0.5f - radius);
+
+            Vector3 point1 = worldCenter + transform.up * halfSegment;
+            Vector3 point2 = worldCenter - transform.up * halfSegment;
+
+            Collider[] colliders = Physics.OverlapCapsule(
+                point1,
+                point2,
+                radius,
+                _standCheckLayers,
+                QueryTriggerInteraction.Ignore
+            );
+
+            foreach (Collider hit in colliders)
+            {
+                if (hit != _controller)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private void ApplySlideMovement(float deltaTime)
@@ -461,21 +488,16 @@ namespace FPS
                 _slideFriction * deltaTime
             );
 
-            if (_dashUsesGravity)
-            {
-                UpdateVerticalVelocity(deltaTime);
-            }
-            else
-            {
-                UpdateVerticalVelocity(deltaTime);
-            }
-
+            UpdateVerticalVelocity(deltaTime);
             ApplyMovement(deltaTime);
 
-            if (!_isGrounded ||
+            bool shouldEndSlide =
+                !_isGrounded ||
                 _slideTimeRemaining <= 0f ||
                 _horizontalVelocity.magnitude <= _slideExitSpeed ||
-                !_playerInput.SlideHeld)
+                !_playerInput.SlideHeld;
+
+            if (shouldEndSlide)
             {
                 EndSlide();
             }
@@ -490,8 +512,26 @@ namespace FPS
 
             _isSliding = false;
 
-            _controller.height = _originalControllerHeight;
-            _controller.center = _originalControllerCenter;
+            TryStandUp();
+        }
+
+        private bool TryStandUp()
+        {
+            if (!_isCrouched)
+            {
+                return true;
+            }
+
+            if (!CanStandUp())
+            {
+                return false;
+            }
+
+            SetControllerHeight(_originalControllerHeight);
+
+            _isCrouched = false;
+
+            return true;
         }
 
         #endregion

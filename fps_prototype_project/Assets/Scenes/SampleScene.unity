@@ -1255,6 +1255,9 @@ MonoBehaviour:
   _allowGroundDash: 1
   _allowAirDash: 1
   _dashUsesGravity: 0
+  _standCheckLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
   _slideDuration: 0.8
   _slideCooldown: 0.5
   _slideFriction: 8
@@ -1879,8 +1882,8 @@ Transform:
   m_GameObject: {fileID: 1218696745}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5, y: 1.5, z: 0}
-  m_LocalScale: {x: 5, y: 1, z: 5}
+  m_LocalPosition: {x: 11.5, y: 2, z: 0}
+  m_LocalScale: {x: 15, y: 1, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 490967406}
