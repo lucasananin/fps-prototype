@@ -41,6 +41,15 @@ namespace FPS
         [SerializeField] private bool _allowAirDash = true;
         [SerializeField] private bool _dashUsesGravity;
 
+        [Header("Slide")]
+        [SerializeField] private float _slideDuration = 0.8f;
+        [SerializeField] private float _slideCooldown = 0.5f;
+        [SerializeField] private float _slideFriction = 8f;
+        [SerializeField] private float _slideMinimumSpeed = 6f;
+        [SerializeField] private float _slideExitSpeed = 3f;
+        [SerializeField] private float _slideHeight = 1f;
+        [SerializeField] private float _slideCenterOffset = 0.5f;
+
         [Header("Ground Detection")]
         [SerializeField] private float _groundCheckRadius = 0.2f;
         [SerializeField] private Transform _groundCheck;
@@ -66,9 +75,16 @@ namespace FPS
         private bool _hasJumpedSinceGround;
         private bool _isDashing;
 
+        private float _slideTimeRemaining;
+        private float _slideCooldownCounter;
+        private float _originalControllerHeight;
+        private Vector3 _originalControllerCenter;
+        private bool _isSliding;
+
         public bool IsGrounded => _isGrounded;
         public bool IsSprinting { get; private set; }
         public bool IsDashing => _isDashing;
+        public bool IsSliding => _isSliding;
         public int JumpsRemaining => _jumpsRemaining;
 
         public Vector3 Velocity =>
@@ -79,9 +95,41 @@ namespace FPS
         private void Awake()
         {
             _controller = GetComponent<CharacterController>();
+            _originalControllerHeight = _controller.height;
+            _originalControllerCenter = _controller.center;
 
             _jumpsRemaining = _maxJumps;
         }
+
+        //private void Update()
+        //{
+        //    float deltaTime = Time.deltaTime;
+
+        //    CheckGround();
+        //    CalculateMovement();
+
+        //    HandleJumpInput(deltaTime);
+        //    UpdateDashCooldown(deltaTime);
+
+        //    if (!_isDashing)
+        //    {
+        //        HandleDashInput();
+        //    }
+
+        //    if (_isDashing)
+        //    {
+        //        ApplyDashMovement(deltaTime);
+        //        return;
+        //    }
+
+        //    HandleJump();
+        //    UpdateVerticalVelocity(deltaTime);
+
+        //    ApplyHorizontalMovement(deltaTime);
+        //    ApplyMovement(deltaTime);
+
+        //    Debug.Log($"{_controller.velocity}");
+        //}
 
         private void Update()
         {
@@ -92,8 +140,9 @@ namespace FPS
 
             HandleJumpInput(deltaTime);
             UpdateDashCooldown(deltaTime);
+            UpdateSlideCooldown(deltaTime);
 
-            if (!_isDashing)
+            if (!_isDashing && !_isSliding)
             {
                 HandleDashInput();
             }
@@ -104,13 +153,22 @@ namespace FPS
                 return;
             }
 
-            HandleJump();
-            UpdateVerticalVelocity(deltaTime);
+            if (!_isSliding)
+            {
+                HandleSlideInput();
+            }
 
+            if (_isSliding)
+            {
+                ApplySlideMovement(deltaTime);
+                return;
+            }
+
+            HandleJump();
+
+            UpdateVerticalVelocity(deltaTime);
             ApplyHorizontalMovement(deltaTime);
             ApplyMovement(deltaTime);
-
-            Debug.Log($"{_controller.velocity}");
         }
 
         private void CheckGround()
@@ -341,6 +399,99 @@ namespace FPS
             {
                 _horizontalVelocity = Vector3.zero;
             }
+        }
+
+        #endregion
+
+        #region Slide
+
+        private void UpdateSlideCooldown(float deltaTime)
+        {
+            if (_slideCooldownCounter > 0f)
+            {
+                _slideCooldownCounter -= deltaTime;
+            }
+        }
+
+        private void HandleSlideInput()
+        {
+            if (!_playerInput.ConsumeSlidePressed())
+            {
+                return;
+            }
+
+            if (!_isGrounded || _slideCooldownCounter > 0f)
+            {
+                return;
+            }
+
+            if (_horizontalVelocity.magnitude < _slideMinimumSpeed)
+            {
+                return;
+            }
+
+            StartSlide();
+        }
+
+        private void StartSlide()
+        {
+            _isSliding = true;
+
+            _slideTimeRemaining = _slideDuration;
+            _slideCooldownCounter = _slideCooldown;
+
+            IsSprinting = false;
+
+            _controller.height = _slideHeight;
+
+            _controller.center = new Vector3(
+                _originalControllerCenter.x,
+                _slideCenterOffset,
+                _originalControllerCenter.z
+            );
+        }
+
+        private void ApplySlideMovement(float deltaTime)
+        {
+            _slideTimeRemaining -= deltaTime;
+
+            _horizontalVelocity = Vector3.MoveTowards(
+                _horizontalVelocity,
+                Vector3.zero,
+                _slideFriction * deltaTime
+            );
+
+            if (_dashUsesGravity)
+            {
+                UpdateVerticalVelocity(deltaTime);
+            }
+            else
+            {
+                UpdateVerticalVelocity(deltaTime);
+            }
+
+            ApplyMovement(deltaTime);
+
+            if (!_isGrounded ||
+                _slideTimeRemaining <= 0f ||
+                _horizontalVelocity.magnitude <= _slideExitSpeed ||
+                !_playerInput.SlideHeld)
+            {
+                EndSlide();
+            }
+        }
+
+        private void EndSlide()
+        {
+            if (!_isSliding)
+            {
+                return;
+            }
+
+            _isSliding = false;
+
+            _controller.height = _originalControllerHeight;
+            _controller.center = _originalControllerCenter;
         }
 
         #endregion
