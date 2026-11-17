@@ -44,7 +44,7 @@ namespace FPS
 
         private void Update()
         {
-            Vector3 goal = _movement.IsSliding ? activeLocalPosition : defaultLocalPosition;
+            Vector3 goal = _movement.IsSliding || _movement.IsCrouching ? activeLocalPosition : defaultLocalPosition;
 
             referenceObject.localPosition = Vector3.SmoothDamp(
                 referenceObject.localPosition,

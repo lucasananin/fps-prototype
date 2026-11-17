@@ -41,6 +41,12 @@ namespace FPS
         [SerializeField] private bool _allowAirDash = true;
         [SerializeField] private bool _dashUsesGravity;
 
+        [Header("Crouch")]
+        [SerializeField] private float _crouchHeight = 1f;
+        [SerializeField] private float _crouchSpeed = 3.5f;
+        [SerializeField] private float _crouchAcceleration = 30f;
+        [SerializeField] private float _crouchDeceleration = 30f;
+
         [Header("Slide")]
         [SerializeField] private LayerMask _standCheckLayers = ~0;
         [SerializeField] private float _slideDuration = 0.8f;
@@ -87,6 +93,7 @@ namespace FPS
         public bool IsSprinting { get; private set; }
         public bool IsDashing => _isDashing;
         public bool IsSliding => _isSliding;
+        public bool IsCrouching => _isCrouched && !_isSliding;
         public int JumpsRemaining => _jumpsRemaining;
 
         public Vector3 Velocity =>
@@ -125,24 +132,25 @@ namespace FPS
                 return;
             }
 
-            if (!_isSliding)
-            {
-                HandleSlideInput();
-            }
+            //if (!_isSliding)
+            //{
+            //    HandleSlideInput();
+            //}
 
-            if (_isSliding)
-            {
-                ApplySlideMovement(deltaTime);
-                return;
-            }
+            //if (_isSliding)
+            //{
+            //    ApplySlideMovement(deltaTime);
+            //    return;
+            //}
 
-            if (_isCrouched && !TryStandUp())
-            {
-                UpdateVerticalVelocity(deltaTime);
-                ApplyMovement(deltaTime);
-                return;
-            }
+            //if (_isCrouched && !TryStandUp())
+            //{
+            //    UpdateVerticalVelocity(deltaTime);
+            //    ApplyMovement(deltaTime);
+            //    return;
+            //}
 
+            HandleCrouchInput();
             HandleJump();
 
             UpdateVerticalVelocity(deltaTime);
@@ -382,6 +390,47 @@ namespace FPS
 
         #endregion
 
+        #region Crouch
+
+        private void HandleCrouchInput()
+        {
+            if (_isSliding)
+            {
+                return;
+            }
+
+            if (_playerInput.CrouchHeld)
+            {
+                if (!_isCrouched)
+                {
+                    StartCrouch();
+                }
+
+                return;
+            }
+
+            if (_isCrouched)
+            {
+                TryStandUp();
+            }
+        }
+
+        private void StartCrouch()
+        {
+            if (_isSliding || !_isGrounded)
+            {
+                return;
+            }
+
+            _isCrouched = true;
+
+            IsSprinting = false;
+
+            SetControllerHeight(_crouchHeight);
+        }
+
+        #endregion
+
         #region Slide
 
         private void UpdateSlideCooldown(float deltaTime)
@@ -550,41 +599,43 @@ namespace FPS
             }
         }
 
-        //private void ApplyGroundMovement(float deltaTime)
-        //{
-        //    Vector3 targetVelocity = _moveDirection * _moveSpeed;
-
-        //    float acceleration = _moveDirection.sqrMagnitude > 0.01f
-        //        ? _groundAcceleration
-        //        : _groundDeceleration;
-
-        //    _horizontalVelocity = Vector3.MoveTowards(
-        //        _horizontalVelocity,
-        //        targetVelocity,
-        //        acceleration * deltaTime
-        //    );
-        //}
-
         private void ApplyGroundMovement(float deltaTime)
         {
             bool hasMovementInput = _moveDirection.sqrMagnitude > 0.01f;
 
+            if (_isCrouched)
+            {
+                IsSprinting = false;
+
+                Vector3 targetVelocity = _moveDirection * _crouchSpeed;
+
+                float acceleration = hasMovementInput
+                    ? _crouchAcceleration
+                    : _crouchDeceleration;
+
+                _horizontalVelocity = Vector3.MoveTowards(
+                    _horizontalVelocity,
+                    targetVelocity,
+                    acceleration * deltaTime
+                );
+
+                return;
+            }
+
             IsSprinting = _playerInput.SprintHeld && hasMovementInput;
 
-            float targetSpeed = IsSprinting
-                ? _sprintSpeed
-                : _moveSpeed;
+            float targetSpeed = IsSprinting ? _sprintSpeed : _moveSpeed;
 
-            Vector3 targetVelocity = _moveDirection * targetSpeed;
+            Vector3 groundTargetVelocity = _moveDirection * targetSpeed;
 
-            float acceleration = hasMovementInput
+            float groundAcceleration = hasMovementInput
                 ? _groundAcceleration
                 : _groundDeceleration;
 
             _horizontalVelocity = Vector3.MoveTowards(
                 _horizontalVelocity,
-                targetVelocity,
-                acceleration * deltaTime
+                groundTargetVelocity,
+                groundAcceleration * deltaTime
             );
         }
 

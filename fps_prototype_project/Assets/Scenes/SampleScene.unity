@@ -1255,6 +1255,10 @@ MonoBehaviour:
   _allowGroundDash: 1
   _allowAirDash: 1
   _dashUsesGravity: 0
+  _crouchHeight: 1
+  _crouchSpeed: 3.5
+  _crouchAcceleration: 30
+  _crouchDeceleration: 30
   _standCheckLayers:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -1305,6 +1309,7 @@ MonoBehaviour:
   _jumpAction: {fileID: -2099379676528639254, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   _sprintAction: {fileID: -7471211009204490832, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   _dashAction: {fileID: -4615856112904115012, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  _crouchAction: {fileID: 7040659881675835329, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   _slideAction: {fileID: 7040659881675835329, guid: 052faaac586de48259a63d0c4782560b, type: 3}
 --- !u!143 &787119902
 CharacterController:
@@ -1882,8 +1887,8 @@ Transform:
   m_GameObject: {fileID: 1218696745}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 11.5, y: 2, z: 0}
-  m_LocalScale: {x: 15, y: 1, z: 5}
+  m_LocalPosition: {x: 5, y: 2, z: 0}
+  m_LocalScale: {x: 5, y: 1, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 490967406}
