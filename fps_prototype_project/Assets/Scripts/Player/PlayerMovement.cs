@@ -239,11 +239,11 @@ namespace FPS
             //if (_isCrouched)
             //{
             //    _verticalVelocity = Mathf.Sqrt(2f * _gravity * (_jumpHeight * 2f));
-            //    TryStandUp();
             //}
 
             _isGrounded = false;
             _hasJumpedSinceGround = true;
+            TryStandUp();
 
             _coyoteTimeCounter = 0f;
             _jumpBufferCounter = 0f;
