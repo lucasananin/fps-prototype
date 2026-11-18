@@ -12,11 +12,9 @@ namespace FPS
         [SerializeField] private InputActionReference _sprintAction;
         [SerializeField] private InputActionReference _dashAction;
         [SerializeField] private InputActionReference _crouchAction;
-        //[SerializeField] private InputActionReference _slideAction;
 
         private bool _jumpPressed;
         private bool _dashPressed;
-        //private bool _slidePressed;
 
         public Vector2 Move { get; private set; }
         public Vector2 LookInput { get; private set; }
@@ -24,7 +22,6 @@ namespace FPS
         public bool JumpHeld { get; private set; }
         public bool SprintHeld { get; private set; }
         public bool CrouchHeld { get; private set; }
-        //public bool SlideHeld { get; private set; }
 
         private void OnEnable()
         {
@@ -34,7 +31,6 @@ namespace FPS
             _sprintAction.action.Enable();
             _dashAction.action.Enable();
             _crouchAction.action.Enable();
-            //_slideAction.action.Enable();
 
             _jumpAction.action.performed += OnJumpPressed;
             _jumpAction.action.canceled += OnJumpReleased;
@@ -48,7 +44,6 @@ namespace FPS
             _jumpAction.action.Disable();
             _dashAction.action.Disable();
             _crouchAction.action.Disable();
-            //_slideAction.action.Disable();
 
             _jumpAction.action.performed -= OnJumpPressed;
             _jumpAction.action.canceled -= OnJumpReleased;
@@ -58,11 +53,9 @@ namespace FPS
             LookInput = Vector2.zero;
             _jumpPressed = false;
             _dashPressed = false;
-            //_slidePressed = false;
             JumpHeld = false;
             SprintHeld = false;
             CrouchHeld = false;
-            //SlideHeld = false;
         }
 
         private void Update()
@@ -72,8 +65,6 @@ namespace FPS
             Move = _moveAction.action.ReadValue<Vector2>();
             SprintHeld = _sprintAction.action.IsPressed();
             CrouchHeld = _crouchAction.action.IsPressed();
-            //_slidePressed = _slideAction.action.IsPressed();
-            //SlideHeld = _slideAction.action.IsPressed();
         }
 
         public bool ConsumeJumpPressed()
@@ -107,12 +98,5 @@ namespace FPS
         {
             _dashPressed = true;
         }
-
-        //public bool ConsumeSlidePressed()
-        //{
-        //    bool pressed = _slidePressed;
-        //    _slidePressed = false;
-        //    return pressed;
-        //}
     }
 }
