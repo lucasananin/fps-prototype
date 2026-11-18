@@ -53,11 +53,16 @@ namespace FPS
         [SerializeField] private float _slideMinimumSpeed = 6f;
         [SerializeField] private float _slideExitSpeed = 3f;
         [SerializeField] private float _slideHeight = 1f;
-        [SerializeField] private float _slideCenterOffset = 0.5f;
 
         [Header("Slide Jump")]
         [SerializeField] private float _slideJumpHeightMultiplier = 1.3f;
         [SerializeField] private float _slideJumpHorizontalBoost = 3f;
+
+        [Header("Ground Detection")]
+        [SerializeField] private LayerMask _groundLayers = default;
+        [SerializeField] private float _groundProbeDistance = 0.3f;
+        [SerializeField] private float _groundStickForce = 5f;
+        [SerializeField] private float _groundProbeRadius = 0.9f;
 
         private CharacterController _controller;
 
@@ -169,6 +174,58 @@ namespace FPS
             }
         }
 
+        //private void CheckGround()
+        //{
+        //    bool canCheckGround = _verticalVelocity <= 0.1f;
+
+        //    bool groundDetected = false;
+
+        //    if (canCheckGround)
+        //    {
+        //        float radius = _controller.radius *
+        //                       Mathf.Max(transform.lossyScale.x, transform.lossyScale.z);
+
+        //        float probeRadius = radius * _groundProbeRadius;
+
+        //        Vector3 capsuleBottom = transform.TransformPoint(
+        //            _controller.center - Vector3.up * (_controller.height * 0.5f)
+        //        );
+
+        //        Vector3 probeOrigin = capsuleBottom + transform.up * radius;
+
+        //        float probeDistance = radius + _groundProbeDistance;
+
+        //        if (Physics.SphereCast(
+        //            probeOrigin,
+        //            probeRadius,
+        //            -transform.up,
+        //            out RaycastHit hit,
+        //            probeDistance,
+        //            _groundLayers,
+        //            QueryTriggerInteraction.Ignore))
+        //        {
+        //            float slopeAngle = Vector3.Angle(hit.normal, transform.up);
+
+        //            groundDetected = slopeAngle <= _controller.slopeLimit;
+        //        }
+        //    }
+
+        //    _isGrounded = canCheckGround &&
+        //                  (_controller.isGrounded || groundDetected);
+
+        //    if (_isGrounded)
+        //    {
+        //        _coyoteTimeCounter = _coyoteTime;
+
+        //        _jumpsRemaining = _maxJumps;
+        //        _hasJumpedSinceGround = false;
+        //    }
+        //    else
+        //    {
+        //        UpdateCoyoteTime(Time.deltaTime);
+        //    }
+        //}
+
         private void CalculateMovement()
         {
             Vector2 input = _playerInput.Move;
@@ -256,8 +313,25 @@ namespace FPS
 
         private void UpdateVerticalVelocity(float deltaTime)
         {
-            if (_isGrounded && _verticalVelocity <= 0f)
+            //if (!_isGrounded)
+            //{
+            //    Debug.Log($"fodase");
+            //}
+
+            if (_isGrounded && _verticalVelocity <= 0f /*&& _groundAngle > 0*/)
+            {
+                //_verticalVelocity = -_groundStickForce;
+                //_isOnRamp = true;
+                //Debug.Log($"stick");
                 return;
+            }
+
+            //if (_isOnRamp && _groundAngle <= 10)
+            //{
+            //    _isOnRamp = false;
+            //    _verticalVelocity = -2f;
+            //    Debug.Log($"unstick");
+            //}
 
             float gravityMultiplier = 1f;
 
@@ -270,9 +344,22 @@ namespace FPS
                 gravityMultiplier = _jumpReleaseGravityMultiplier;
             }
 
-            _verticalVelocity -=
-                _gravity * gravityMultiplier * deltaTime;
+            _verticalVelocity -= _gravity * gravityMultiplier * deltaTime;
         }
+
+        //bool _isOnRamp = false;
+        //public float _groundAngle;
+        //Vector3 groundNormal = Vector3.up;
+
+        //void OnControllerColliderHit(ControllerColliderHit hit)
+        //{
+        //    // Ignore walls and ceilings, only care about surfaces facing up
+        //    if (hit.normal.y > 0.1f)
+        //    {
+        //        groundNormal = hit.normal;
+        //        _groundAngle = Vector3.Angle(hit.normal, Vector3.up);
+        //    }
+        //}
 
         #endregion
 
