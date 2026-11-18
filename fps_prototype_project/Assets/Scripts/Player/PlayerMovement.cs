@@ -59,11 +59,6 @@ namespace FPS
         [SerializeField] private float _slideJumpHeightMultiplier = 1.3f;
         [SerializeField] private float _slideJumpHorizontalBoost = 3f;
 
-        //[Header("Ground Detection")]
-        //[SerializeField] private float _groundCheckRadius = 0.2f;
-        //[SerializeField] private Transform _groundCheck;
-        //[SerializeField] private LayerMask _groundLayers;
-
         private CharacterController _controller;
 
         private Vector3 _moveDirection;
@@ -98,9 +93,7 @@ namespace FPS
         public bool IsCrouching => _isCrouched && !_isSliding;
         public int JumpsRemaining => _jumpsRemaining;
 
-        public Vector3 Velocity =>
-            _horizontalVelocity + Vector3.up * _verticalVelocity;
-
+        public Vector3 Velocity => _horizontalVelocity + Vector3.up * _verticalVelocity;
         public float DashCooldownRemaining => _dashCooldownCounter;
 
         private void Awake()
@@ -134,17 +127,6 @@ namespace FPS
                 return;
             }
 
-            //if (!_isSliding)
-            //{
-            //    HandleSlideInput();
-            //}
-
-            //if (_isSliding)
-            //{
-            //    ApplySlideMovement(deltaTime);
-            //    return;
-            //}
-
             if (_isSliding)
             {
                 if (TryPerformSlideJump())
@@ -157,13 +139,6 @@ namespace FPS
                 ApplySlideMovement(deltaTime);
                 return;
             }
-
-            //if (_isCrouched && !TryStandUp())
-            //{
-            //    UpdateVerticalVelocity(deltaTime);
-            //    ApplyMovement(deltaTime);
-            //    return;
-            //}
 
             HandleCrouchInput();
             HandleJump();
@@ -250,11 +225,6 @@ namespace FPS
             _verticalVelocity = Mathf.Sqrt(
                 2f * _gravity * _jumpHeight
             );
-
-            //if (_isCrouched)
-            //{
-            //    _verticalVelocity = Mathf.Sqrt(2f * _gravity * (_jumpHeight * 2f));
-            //}
 
             _isGrounded = false;
             _hasJumpedSinceGround = true;
@@ -500,26 +470,6 @@ namespace FPS
                 _slideCooldownCounter -= deltaTime;
             }
         }
-
-        //private void HandleSlideInput()
-        //{
-        //    if (!_playerInput.ConsumeSlidePressed())
-        //    {
-        //        return;
-        //    }
-
-        //    if (!_isGrounded || _slideCooldownCounter > 0f)
-        //    {
-        //        return;
-        //    }
-
-        //    if (_horizontalVelocity.magnitude < _slideMinimumSpeed)
-        //    {
-        //        return;
-        //    }
-
-        //    StartSlide();
-        //}
 
         private void StartSlide()
         {
