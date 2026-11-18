@@ -1,6 +1,4 @@
-
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace FPS
 {
@@ -57,10 +55,14 @@ namespace FPS
         [SerializeField] private float _slideHeight = 1f;
         [SerializeField] private float _slideCenterOffset = 0.5f;
 
-        [Header("Ground Detection")]
-        [SerializeField] private float _groundCheckRadius = 0.2f;
-        [SerializeField] private Transform _groundCheck;
-        [SerializeField] private LayerMask _groundLayers;
+        [Header("Slide Jump")]
+        [SerializeField] private float _slideJumpHeightMultiplier = 1.3f;
+        [SerializeField] private float _slideJumpHorizontalBoost = 3f;
+
+        //[Header("Ground Detection")]
+        //[SerializeField] private float _groundCheckRadius = 0.2f;
+        //[SerializeField] private Transform _groundCheck;
+        //[SerializeField] private LayerMask _groundLayers;
 
         private CharacterController _controller;
 
@@ -137,8 +139,21 @@ namespace FPS
             //    HandleSlideInput();
             //}
 
+            //if (_isSliding)
+            //{
+            //    ApplySlideMovement(deltaTime);
+            //    return;
+            //}
+
             if (_isSliding)
             {
+                if (TryPerformSlideJump())
+                {
+                    UpdateVerticalVelocity(deltaTime);
+                    ApplyMovement(deltaTime);
+                    return;
+                }
+
                 ApplySlideMovement(deltaTime);
                 return;
             }
@@ -627,6 +642,50 @@ namespace FPS
             SetControllerHeight(_originalControllerHeight);
 
             _isCrouched = false;
+
+            return true;
+        }
+
+        #endregion
+
+        #region Slide Jump
+
+        private bool TryPerformSlideJump()
+        {
+            if (!_isSliding || !_isGrounded || _jumpBufferCounter <= 0f)
+            {
+                return false;
+            }
+
+            if (_jumpsRemaining <= 0)
+            {
+                return false;
+            }
+
+            Vector3 jumpDirection = _horizontalVelocity.normalized;
+
+            if (jumpDirection.sqrMagnitude < 0.01f)
+            {
+                jumpDirection = _moveDirection;
+            }
+
+            // Preserve slide momentum and add forward acceleration.
+            _horizontalVelocity += jumpDirection * _slideJumpHorizontalBoost;
+
+            // Apply the increased jump height.
+            _verticalVelocity = Mathf.Sqrt(
+                2f * _gravity * _jumpHeight * _slideJumpHeightMultiplier
+            );
+
+            // Consume one jump.
+            _jumpsRemaining--;
+
+            _hasJumpedSinceGround = true;
+            _coyoteTimeCounter = 0f;
+            _jumpBufferCounter = 0f;
+
+            // End the slide and restore the capsule when possible.
+            EndSlide();
 
             return true;
         }
