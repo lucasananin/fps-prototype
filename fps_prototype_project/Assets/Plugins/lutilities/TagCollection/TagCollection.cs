@@ -6,8 +6,7 @@ namespace lutilities.TagCollections
     [CreateAssetMenu(fileName = "TagCollection_", menuName = "Scriptable Objects/Tag Collection")]
     public class TagCollection : ScriptableObject
     {
-        [SerializeField]
-        private TagEntry[] _tags;
+        [SerializeField] private TagEntry[] _tags;
 
         public bool Contains(string tag)
         {

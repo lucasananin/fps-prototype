@@ -5,13 +5,16 @@ namespace FPS
 {
     public class PlayerInputReader : MonoBehaviour
     {
-        [Header("Input Actions")]
+        [Header("Movement Actions")]
         [SerializeField] private InputActionReference _moveAction;
         [SerializeField] private InputActionReference _lookAction;
         [SerializeField] private InputActionReference _jumpAction;
         [SerializeField] private InputActionReference _sprintAction;
         [SerializeField] private InputActionReference _dashAction;
         [SerializeField] private InputActionReference _crouchAction;
+
+        [Header("Combat Actions")]
+        [SerializeField] private InputActionReference _shootAction;
 
         private bool _jumpPressed;
         private bool _dashPressed;
@@ -22,6 +25,7 @@ namespace FPS
         public bool JumpHeld { get; private set; }
         public bool SprintHeld { get; private set; }
         public bool CrouchHeld { get; private set; }
+        public InputAction ShootAction { get => _shootAction.action; }
 
         private void OnEnable()
         {
@@ -31,6 +35,7 @@ namespace FPS
             _sprintAction.action.Enable();
             _dashAction.action.Enable();
             _crouchAction.action.Enable();
+            _shootAction.action.Enable();
 
             _jumpAction.action.performed += OnJumpPressed;
             _jumpAction.action.canceled += OnJumpReleased;
@@ -44,6 +49,7 @@ namespace FPS
             _jumpAction.action.Disable();
             _dashAction.action.Disable();
             _crouchAction.action.Disable();
+            _shootAction.action.Disable();
 
             _jumpAction.action.performed -= OnJumpPressed;
             _jumpAction.action.canceled -= OnJumpReleased;

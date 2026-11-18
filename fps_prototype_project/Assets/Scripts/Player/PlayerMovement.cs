@@ -58,11 +58,11 @@ namespace FPS
         [SerializeField] private float _slideJumpHeightMultiplier = 1.3f;
         [SerializeField] private float _slideJumpHorizontalBoost = 3f;
 
-        [Header("Ground Detection")]
-        [SerializeField] private LayerMask _groundLayers = default;
-        [SerializeField] private float _groundProbeDistance = 0.3f;
-        [SerializeField] private float _groundStickForce = 5f;
-        [SerializeField] private float _groundProbeRadius = 0.9f;
+        //[Header("Ground Detection")]
+        //[SerializeField] private LayerMask _groundLayers = default;
+        //[SerializeField] private float _groundProbeDistance = 0.3f;
+        //[SerializeField] private float _groundStickForce = 5f;
+        //[SerializeField] private float _groundProbeRadius = 0.9f;
 
         private CharacterController _controller;
 
