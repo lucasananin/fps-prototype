@@ -12,13 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f14e637aab3370b47aa55ddc7dacfa99, type: 3}
   m_Name: Weapon_
   m_EditorClassIdentifier: Assembly-CSharp::WeaponSO
-  _iconSprite: {fileID: 0}
   _weaponPrefab: {fileID: 0}
   _id: warmaker_mg
   _displayName: Warmaker
   _typeName: Machine Gun
   _projectileSO: {fileID: 11400000, guid: fcfe4f87d4505f1458db5baac5371813, type: 2}
-  _triggerType: 0
+  _triggerType: 1
   _stats:
     _damage: 1
     _explosiveDamage: 1
@@ -32,9 +31,9 @@ MonoBehaviour:
     _arcMode: 0
     _projectilesPerShot: 1
     _ammoPerShot: 1
-    _isAutoChargeType: 0
+    _isAutoChargeType: 1
     _burstRate: 0
-    _shotsPerBurst: 0
+    _shotsPerBurst: 3
   _projectileStats:
     _destroyTimeRange: {x: 0, y: 0}
     _canDamageProjectiles: 0

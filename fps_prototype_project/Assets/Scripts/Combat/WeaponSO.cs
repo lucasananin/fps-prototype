@@ -5,7 +5,7 @@ using UnityEngine;
 public class WeaponSO : ScriptableObject
 {
     [Header("// General")]
-    [SerializeField] Sprite _iconSprite = null;
+    //[SerializeField] Sprite _iconSprite = null;
     [SerializeField] WeaponBehaviour _weaponPrefab = null;
     [SerializeField] string _id = "warmaker_mg";
     [SerializeField] string _displayName = "Warmaker";
@@ -24,7 +24,7 @@ public class WeaponSO : ScriptableObject
     [SerializeField] WeaponStats _stats = null;
     [SerializeField] ProjectileStats _projectileStats = null;
 
-    public Sprite SpriteIcon { get => _iconSprite; private set => _iconSprite = value; }
+    //public Sprite SpriteIcon { get => _iconSprite; private set => _iconSprite = value; }
     public WeaponBehaviour WeaponPrefab { get => _weaponPrefab; private set => _weaponPrefab = value; }
     public string Id { get => _id; private set => _id = value; }
     public string DisplayName { get => _displayName; private set => _displayName = value; }
@@ -115,11 +115,9 @@ public class WeaponStats
 
     //[Header("- WEAPON SPECIFICS -", null, TitleAlignments.Centered)]
 
-    [Header("// Semi-Auto Behaviour: Properties")]
+    [Header("// Semi-Auto Properties")]
     [SerializeField] bool _isAutoChargeType = false;
     //[SerializeField] bool _hasChargeWeakShot = false;
-
-    [Header("// Burst Behaviour: Properties")]
     [SerializeField, Range(0f, 9f)] float _burstRate = 0f;
     [SerializeField, Range(0, 99)] int _shotsPerBurst = 0;
 
