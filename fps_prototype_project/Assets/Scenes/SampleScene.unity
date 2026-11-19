@@ -615,13 +615,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f6fb035f859b534ea5d12c38c65bdc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FPS.WeaponBehaviour
-  _weaponSO: {fileID: 11400000, guid: 30c87dd07fe5cf9449fd235de1550b5b, type: 2}
+  _so: {fileID: 11400000, guid: 30c87dd07fe5cf9449fd235de1550b5b, type: 2}
   _muzzle: {fileID: 862710939}
-  _entitySource: {fileID: 0}
-  _ammoHandler: {fileID: 0}
-  _nextFire: 0
-  _chargeTimer: 0
-  _isCharging: 0
   _currentHeat: 0
   _overheatTimer: 0
   _isOverheated: 0
