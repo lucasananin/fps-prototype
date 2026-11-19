@@ -93,7 +93,8 @@ namespace FPS
         [SerializeField, Range(0f, 99f)] float _maxHeat = 0f;
         [SerializeField, Range(0f, 99f)] float _heatPerShot = 0f;
         [SerializeField, Range(0f, 99f)] float _heatDecreasePerSecond = 0f;
-        [SerializeField, Range(0f, 9f)] float _OverheatDuration = 0f;
+        [SerializeField, Range(0f, 9f)] float _overheatDuration = 0f;
+        [SerializeField, Range(1f, 9f)] float _overheatDecreaseMultiplier = 2f;
 
         [Header("// Precision")]
         [SerializeField, Range(0, 360)] float _shootAngle = 0;
@@ -116,7 +117,8 @@ namespace FPS
         public float MaxHeat { get => _maxHeat; }
         public float HeatPerShot { get => _heatPerShot; }
         public float HeatDecreasePerSecond { get => _heatDecreasePerSecond; }
-        public float OverheatDuration { get => _OverheatDuration; }
+        public float OverheatDuration { get => _overheatDuration; }
+        public float OverheatDecreaseMultiplier { get => _overheatDecreaseMultiplier; }
         public float ShootAngle { get => _shootAngle; }
         public ShootArcMode ArcMode { get => _arcMode; }
         public int ProjectilesPerShot { get => _projectilesPerShot; }

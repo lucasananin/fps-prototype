@@ -12,21 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f14e637aab3370b47aa55ddc7dacfa99, type: 3}
   m_Name: Weapon_
   m_EditorClassIdentifier: Assembly-CSharp::WeaponSO
-  _weaponPrefab: {fileID: 0}
   _id: warmaker_mg
   _displayName: Warmaker
   _typeName: Machine Gun
+  _weaponPrefab: {fileID: 0}
   _projectileSO: {fileID: 11400000, guid: fcfe4f87d4505f1458db5baac5371813, type: 2}
   _stats:
-    _triggerType: 0
+    _triggerType: 1
     _damage: 1
     _explosiveDamage: 1
     _fireRate: 0.1
-    _chargeTime: 0
-    _maxHeat: 0
-    _heatPerShot: 0
-    _heatDecreasePerSecond: 0
-    _maxOverheatTime: 0
+    _chargeDuration: 0
+    _maxHeat: 99
+    _heatPerShot: 3
+    _heatDecreasePerSecond: 10
+    _overheatDuration: 2
+    _overheatDecreaseMultiplier: 2
     _shootAngle: 0
     _arcMode: 0
     _projectilesPerShot: 1

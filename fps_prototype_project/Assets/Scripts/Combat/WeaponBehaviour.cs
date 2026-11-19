@@ -8,15 +8,15 @@ namespace FPS
         [SerializeField] protected WeaponSO _so = null;
         [SerializeField] protected Transform _muzzle = null;
 
-        [Header("// Debug")]
         protected AbstractEntity _entitySource = null;
         protected AmmoHandler _ammoHandler = null;
+
         protected float _nextFire = 0;
         protected float _chargeTimer = 0f;
         protected bool _isCharging = false;
-        [SerializeField] protected float _currentHeat = 0f;
-        [SerializeField] protected float _overheatTimer = 0f;
-        [SerializeField] protected bool _isOverheated = false;
+        protected float _currentHeat = 0f;
+        protected float _overheatTimer = 0f;
+        protected bool _isOverheated = false;
 
         protected float _nextBurst = 0;
         protected int _currentShootCount = 0;
@@ -233,7 +233,8 @@ namespace FPS
         {
             if (!_so.CanOverheat()) return;
 
-            _currentHeat -= _currentHeat > 0 ? _so.Stats.HeatDecreasePerSecond * Time.deltaTime : 0;
+            var _overheatMultiplier = _isOverheated ? _so.Stats.OverheatDecreaseMultiplier : 1;
+            _currentHeat -= _currentHeat > 0 ? _so.Stats.HeatDecreasePerSecond * _overheatMultiplier * Time.deltaTime : 0;
 
             if (_isOverheated)
             {
