@@ -2,18 +2,18 @@ using UnityEngine;
 
 namespace FPS
 {
-    [CreateAssetMenu(fileName = "Weapon_", menuName = "SO/Combat/Weapon Data")]
+    [CreateAssetMenu(fileName = "Weapon_", menuName = "Scriptable Objects/Combat/Weapon Data")]
     public class WeaponSO : ScriptableObject
     {
         [SerializeField] private string _id = "warmaker_mg";
         [SerializeField] private string _displayName = "Warmaker";
         [SerializeField] private string _typeName = "Machine Gun";
-        [SerializeField] private WeaponBehaviour _weaponPrefab = null;
+        [SerializeField] private WeaponBehaviour _prefab = null;
         [SerializeField] private ProjectileSO _projectileSO = null;
         [SerializeField] private WeaponStats _stats = null;
         [SerializeField] private ProjectileStats _projectileStats = null;
 
-        public WeaponBehaviour WeaponPrefab { get => _weaponPrefab; }
+        public WeaponBehaviour Prefab { get => _prefab; }
         public string Id { get => _id; }
         public string DisplayName { get => _displayName; }
         public string TypeName { get => _typeName; }

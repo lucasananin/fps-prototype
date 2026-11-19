@@ -7,7 +7,7 @@ namespace FPS
     public abstract class ProjectileBehaviour : MonoBehaviour
     {
         [Header("// Debug - Projectile")]
-        [SerializeField] protected ShootModel _shootModel = null;
+        [SerializeField] protected ShootInfo _shootModel = null;
         [SerializeField] protected ProjectileSO _projectileSO = null;
         [SerializeField] protected ProjectileStats _stats = null;
         [SerializeField] protected float _timeUntilDestroy = 0f;
@@ -19,7 +19,7 @@ namespace FPS
         private RaycastHit2D[] _obstacleResults = new RaycastHit2D[9];
         private List<AbstractEntity> _entitiesFound = new List<AbstractEntity>();
 
-        public event System.Action<ShootModel> OnInit = null;
+        public event System.Action<ShootInfo> OnInit = null;
         public event System.Action<RaycastHit2D> OnRaycastHit = null;
         public event System.Action OnDestroy_TimerEnd = null;
         public event System.Action OnDestroy_Stop = null;
@@ -27,10 +27,10 @@ namespace FPS
 
         const string PROJECTILE_TAG = "Projectile";
 
-        public ShootModel ShootModel { get => _shootModel; }
+        public ShootInfo ShootModel { get => _shootModel; }
         public float TimeUntilDestroy { get => _timeUntilDestroy; }
 
-        public virtual void Init(ShootModel _newShootModel)
+        public virtual void Init(ShootInfo _newShootModel)
         {
             _shootModel = _newShootModel;
             _projectileSO = _newShootModel.ProjectileSO;

@@ -617,9 +617,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FPS.WeaponBehaviour
   _so: {fileID: 11400000, guid: 30c87dd07fe5cf9449fd235de1550b5b, type: 2}
   _muzzle: {fileID: 862710939}
-  _currentHeat: 0
-  _overheatTimer: 0
-  _isOverheated: 0
 --- !u!1 &243951542
 GameObject:
   m_ObjectHideFlags: 0
@@ -3481,7 +3478,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1359027648
 Transform:
   m_ObjectHideFlags: 0

@@ -14,6 +14,7 @@ namespace FPS
         protected float _nextFire = 0;
         protected float _chargeTimer = 0f;
         protected bool _isCharging = false;
+
         protected float _currentHeat = 0f;
         protected float _overheatTimer = 0f;
         protected bool _isOverheated = false;
@@ -46,6 +47,7 @@ namespace FPS
         private void Update()
         {
             DecreaseHeat();
+            UpdateOverheatState();
         }
 
         public virtual void Init(AbstractEntity _entityBehaviour, AmmoHandler _ammoHandler)
@@ -169,10 +171,9 @@ namespace FPS
 
                 var _position = CalculateProjectilePosition(_projectileSO);
                 var _rotation = CalculateProjectileRotation(i);
-                //var _parent = _entitySource.transform;
-                var _projectile = Instantiate(_projectileSO.Prefab, _position, _rotation/*, _parent*/);
-                var _shootModel = new ShootModel(_entitySource, this, _projectileSO);
-                _projectile.Init(_shootModel);
+                var _projectileInstance = Instantiate(_projectileSO.Prefab, _position, _rotation);
+                var _shootInfo = new ShootInfo(_entitySource, this, _projectileSO);
+                _projectileInstance.Init(_shootInfo);
             }
         }
 
@@ -215,6 +216,8 @@ namespace FPS
             return _chargeTimer >= _so.Stats.ChargeDuration;
         }
 
+        #region HEAT
+
         protected void IncreaseHeat(float _value)
         {
             if (!_so.CanOverheat()) return;
@@ -235,6 +238,11 @@ namespace FPS
 
             var _overheatMultiplier = _isOverheated ? _so.Stats.OverheatDecreaseMultiplier : 1;
             _currentHeat -= _currentHeat > 0 ? _so.Stats.HeatDecreasePerSecond * _overheatMultiplier * Time.deltaTime : 0;
+        }
+
+        protected void UpdateOverheatState()
+        {
+            if (!_so.CanOverheat()) return;
 
             if (_isOverheated)
             {
@@ -246,6 +254,8 @@ namespace FPS
                 }
             }
         }
+
+        #endregion
 
         public float GetPullTriggerTotalTime()
         {
@@ -295,7 +305,6 @@ namespace FPS
 
         public virtual void ResetRuntimeValues()
         {
-            _nextFire = 0;
             _chargeTimer = 0f;
             _isCharging = false;
             _isBursting = false;

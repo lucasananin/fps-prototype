@@ -1,25 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace FPS
 {
-    public class PlayerWeaponHandler : WeaponHandler
+    public class PlayerWeaponHandler : AbstractWeaponHandler
     {
         [SerializeField] AbstractEntity _entitySource = null;
         [SerializeField] AmmoHandler _ammoHandler = null;
         [SerializeField] PlayerInputReader _input = null;
-        [SerializeField, Range(1, 9)] int _maxWeaponsCount = 2;
-        [SerializeField, Range(0f, 1f)] float _swapInputDelay = 0.3f;
-        [SerializeField] List<WeaponBehaviour> _weaponsList = null;
+        [SerializeField, Range(1, 9)] int _maxWeaponAmount = 2;
+        [SerializeField, Range(0f, 1f)] float _changeWeaponInputDelay = 0.3f;
 
         [Header("// Debug")]
+        [SerializeField] List<WeaponBehaviour> _weaponsList = null;
         [SerializeField] WeaponBehaviour _currentWeapon = null;
         [SerializeField] int _currentWeaponIndex = 0;
-        [SerializeField] bool _isWaitingSwapDelay = false;
+        [SerializeField] bool _isWaitingChangeWeaponDelay = false;
 
-        public event System.Action OnWeaponAdded = null;
-        public event System.Action OnWeaponSwapped = null;
+        public event UnityAction OnWeaponAdded = null;
+        public event UnityAction OnWeaponSwapped = null;
 
         private void Awake()
         {
@@ -54,26 +55,26 @@ namespace FPS
                 _currentWeapon.ReleaseTrigger();
         }
 
-        public void SwapThroughInput(float _y)
+        public void ChangeWeaponUsingMouseScroll(float _y)
         {
-            if (_isWaitingSwapDelay) return;
+            if (_isWaitingChangeWeaponDelay) return;
             if (_weaponsList.Count < 2) return;
 
             if (_y > 0)
-                SwapToNextWeapon();
+                ChangeToNextWeapon();
             else if (_y < 0)
-                SwapToPreviousWeapon();
+                ChangeToPreviousWeapon();
 
             OnWeaponSwapped?.Invoke();
-            StartCoroutine(DisableWeaponSwap_routine());
+            StartCoroutine(DisableWeaponChange_Routine());
         }
 
-        private void SwapToNextWeapon()
+        private void ChangeToNextWeapon()
         {
             IncreaseWeaponIndex(1);
         }
 
-        private void SwapToPreviousWeapon()
+        private void ChangeToPreviousWeapon()
         {
             IncreaseWeaponIndex(-1);
         }
@@ -116,9 +117,9 @@ namespace FPS
 
         public void AddWeapon(WeaponSO _weaponSO, out WeaponSO _droppedWeaponSO)
         {
-            var _newWeapon = Instantiate(_weaponSO.WeaponPrefab, transform.position, Quaternion.identity, transform);
+            var _newWeapon = Instantiate(_weaponSO.Prefab, transform.position, Quaternion.identity, transform);
 
-            if (_weaponsList.Count >= _maxWeaponsCount)
+            if (_weaponsList.Count >= _maxWeaponAmount)
             {
                 _weaponsList[_currentWeaponIndex] = _newWeapon;
                 _droppedWeaponSO = _currentWeapon.WeaponSO;
@@ -129,7 +130,7 @@ namespace FPS
             {
                 _weaponsList.Add(_newWeapon);
                 _droppedWeaponSO = null;
-                SwapToNextWeapon();
+                ChangeToNextWeapon();
             }
 
             OnWeaponAdded?.Invoke();
@@ -167,11 +168,11 @@ namespace FPS
             return _weaponsList[1];
         }
 
-        private IEnumerator DisableWeaponSwap_routine()
+        private IEnumerator DisableWeaponChange_Routine()
         {
-            _isWaitingSwapDelay = true;
-            yield return new WaitForSeconds(_swapInputDelay);
-            _isWaitingSwapDelay = false;
+            _isWaitingChangeWeaponDelay = true;
+            yield return new WaitForSeconds(_changeWeaponInputDelay);
+            _isWaitingChangeWeaponDelay = false;
         }
 
         public List<AmmoSO> GetAmmoTypes()

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace FPS
 {
-    public class WeaponShootListener : MonoBehaviour
+    public class WeaponShootPlaceholder : MonoBehaviour
     {
         [SerializeField] WeaponBehaviour _weapon = null;
         [SerializeField] GameObject _content = null;
