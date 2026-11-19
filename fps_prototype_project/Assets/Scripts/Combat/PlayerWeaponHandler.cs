@@ -6,7 +6,7 @@ namespace FPS
 {
     public class PlayerWeaponHandler : WeaponHandler
     {
-        [SerializeField] EntityBehaviour _entitySource = null;
+        [SerializeField] AbstractEntity _entitySource = null;
         [SerializeField] AmmoHandler _ammoHandler = null;
         [SerializeField] PlayerInputReader _input = null;
         [SerializeField, Range(1, 9)] int _maxWeaponsCount = 2;
@@ -23,6 +23,9 @@ namespace FPS
 
         private void Awake()
         {
+            if (_entitySource == null)
+                _entitySource = GetComponent<PlayerEntity>();
+
             SetCurrentWeapon();
         }
 

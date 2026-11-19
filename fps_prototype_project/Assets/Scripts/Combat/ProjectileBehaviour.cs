@@ -17,7 +17,7 @@ namespace FPS
 
         private Collider2D[] _explosionResults = new Collider2D[9];
         private RaycastHit2D[] _obstacleResults = new RaycastHit2D[9];
-        private List<EntityBehaviour> _entitiesFound = new List<EntityBehaviour>();
+        private List<AbstractEntity> _entitiesFound = new List<AbstractEntity>();
 
         public event System.Action<ShootModel> OnInit = null;
         public event System.Action<RaycastHit2D> OnRaycastHit = null;
@@ -117,7 +117,7 @@ namespace FPS
 
                 if (HasHitSource(_colliderHit.gameObject)) continue;
 
-                if (_colliderHit.TryGetComponent(out EntityBehaviour _entity))
+                if (_colliderHit.TryGetComponent(out AbstractEntity _entity))
                 {
                     _entitiesFound.Add(_entity);
                 }

@@ -3,20 +3,20 @@ using UnityEngine;
 
 namespace FPS
 {
-    public abstract class EntityBehaviour : MonoBehaviour
+    public abstract class AbstractEntity : MonoBehaviour
     {
-        [SerializeField] protected EntitySO _entitySO = null;
-        [SerializeField] protected Health _healthBehaviour = null;
+        [SerializeField] protected AbstractEntitySO _entitySO = null;
+        //[SerializeField] protected Health _healthBehaviour = null;
 
-        public T GetEntitySO<T>() where T : EntitySO
+        public T GetEntitySO<T>() where T : AbstractEntitySO
         {
             return _entitySO as T;
         }
 
-        public bool IsAlive()
-        {
-            return _healthBehaviour.IsAlive();
-        }
+        //public bool IsAlive()
+        //{
+        //    return _healthBehaviour.IsAlive();
+        //}
 
         //public string[] GetOpponentTags()
         //{

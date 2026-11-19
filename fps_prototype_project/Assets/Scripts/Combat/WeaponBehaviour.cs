@@ -3,15 +3,14 @@ using UnityEngine.Events;
 
 namespace FPS
 {
-    public abstract class WeaponBehaviour : MonoBehaviour
+    public class WeaponBehaviour : MonoBehaviour
     {
         [Header("// Weapon")]
         [SerializeField] protected WeaponSO _weaponSO = null;
         [SerializeField] protected Transform _muzzle = null;
-        //[SerializeField] protected Transform[] _muzzles = null;
 
         [Header("// Debug - Weapon")]
-        [SerializeField] protected EntityBehaviour _entitySource = null;
+        [SerializeField] protected AbstractEntity _entitySource = null;
         [SerializeField] protected AmmoHandler _ammoHandler = null;
         [SerializeField] protected float _nextFire = 0;
         [SerializeField] protected float _chargeTimer = 0f;
@@ -19,6 +18,11 @@ namespace FPS
         [SerializeField] protected float _currentHeat = 0f;
         [SerializeField] protected float _overheatTimer = 0f;
         [SerializeField] protected bool _isOverheated = false;
+
+        private float _nextBurst = 0;
+        private int _currentShootCount = 0;
+        private bool _isBursting = false;
+        private bool _isHoldingTrigger = false;
 
         public event UnityAction<WeaponBehaviour> OnInit = null;
         public event UnityAction OnShoot = null;
@@ -34,6 +38,71 @@ namespace FPS
         protected virtual void Awake()
         {
             _nextFire = _weaponSO.Stats.FireRate;
+            _nextBurst = _weaponSO.Stats.BurstRate;
+        }
+
+        private void FixedUpdate()
+        {
+            //if (!HasAmmo()) return;
+            //if (_isOverheated) return;
+
+            if (_weaponSO.TriggerType == TriggerType.Semi_Automatic)
+            {
+                //if (CanAutoChargeShot())
+                //{
+                //    _isCharging = false;
+                //    _hasShotCharge = true;
+                //    ShootChargedShot();
+                //}
+
+                if (_weaponSO.HasChargeTime() && _isHoldingTrigger)
+                {
+                    UpdateChargeTimer();
+
+                    if (HasEnoughChargeTimer())
+                        _isBursting = true;
+                }
+
+                if (_isBursting)
+                {
+                    _isCharging = false;
+                    _chargeTimer = 0;
+
+                    _nextFire += _nextFire < _weaponSO.Stats.FireRate ? Time.fixedDeltaTime : 0;
+
+                    if (_nextFire >= _weaponSO.Stats.FireRate)
+                    {
+                        Shoot();
+
+                        _currentShootCount++;
+
+                        if (_currentShootCount >= _weaponSO.Stats.ShotsPerBurst)
+                        {
+                            _nextFire = _weaponSO.Stats.FireRate;
+                            _isBursting = false;
+                        }
+                    }
+                }
+                else
+                {
+                    _nextBurst += _nextBurst < _weaponSO.Stats.BurstRate ? Time.fixedDeltaTime : 0;
+                }
+            }
+            else if (_weaponSO.TriggerType == TriggerType.Full_Automatic)
+            {
+                _nextFire += _nextFire < _weaponSO.Stats.FireRate ? Time.fixedDeltaTime : 0;
+
+                UpdateChargeTimer();
+
+                if (!HasEnoughChargeTimer()) return;
+                if (_isOverheated) return;
+                if (!HasAmmo()) return;
+
+                if (_nextFire >= _weaponSO.Stats.FireRate && _isHoldingTrigger /*&& !_isOverheated*/)
+                {
+                    Shoot();
+                }
+            }
         }
 
         protected virtual void Update()
@@ -41,26 +110,57 @@ namespace FPS
             DecreaseHeat();
         }
 
-        public virtual void Init(EntityBehaviour _entityBehaviour, AmmoHandler _ammoHandler)
+        public virtual void Init(AbstractEntity _entityBehaviour, AmmoHandler _ammoHandler)
         {
             this._ammoHandler = _ammoHandler;
             _entitySource = _entityBehaviour;
             OnInit?.Invoke(this);
         }
 
-        //public virtual void Init(EntityBehaviour _entityBehaviour)
-        //{
-        //    _entitySource = _entityBehaviour;
-        //    OnInit?.Invoke(this);
-        //}
-
         public virtual void PullTrigger()
         {
+            //if (!HasAmmo()) return;
+            //if (_isOverheated) return;
+
+            if (_weaponSO.TriggerType == TriggerType.Semi_Automatic)
+            {
+                if (!HasAmmo()) return;
+                if (_isOverheated) return;
+                if (_nextBurst < _weaponSO.Stats.BurstRate) return;
+
+                _nextBurst -= _weaponSO.Stats.BurstRate;
+                _currentShootCount = 0;
+
+                if (!_weaponSO.HasChargeTime()) _isBursting = true;
+
+                //_isBursting = true;
+                //_isHoldingTrigger = true;
+            }
+            else if (_weaponSO.TriggerType == TriggerType.Full_Automatic)
+            {
+                //_isCharging = true;
+                //_isHoldingTrigger = true;
+            }
+
+            _isHoldingTrigger = true;
+            _isCharging = true;
             OnPullTrigger?.Invoke();
         }
 
         public virtual void ReleaseTrigger()
         {
+            if (_weaponSO.TriggerType == TriggerType.Semi_Automatic)
+            {
+                //
+            }
+            else if (_weaponSO.TriggerType == TriggerType.Full_Automatic)
+            {
+                //_isCharging = false;
+                //_isHoldingTrigger = false;
+            }
+
+            _isCharging = false;
+            _isHoldingTrigger = false;
             OnReleaseTrigger?.Invoke();
         }
 
@@ -68,6 +168,8 @@ namespace FPS
         {
             //_nextFire -= _weaponSO.FireRate;
             _nextFire = 0;
+            //_chargeTimer = 0;
+            //_isCharging = false;
             PrepareProjectile(_weaponSO.ProjectileSO/*, false*/);
             DecreaseAmmo(_weaponSO.ProjectileSO);
             IncreaseHeat(_weaponSO.Stats.HeatPerShot);
@@ -80,6 +182,7 @@ namespace FPS
             //_chargeTimer -= _weaponSO.MaxChargeTime;
             _nextFire = 0;
             _chargeTimer = 0;
+            _isCharging = false;
             PrepareProjectile(_weaponSO.ProjectileSO/*, true*/);
             DecreaseAmmo(_weaponSO.ProjectileSO);
             IncreaseHeat(_weaponSO.Stats.MaxHeat + HEAT_OFFSET);
@@ -229,6 +332,14 @@ namespace FPS
             //_nextFire = 0;
             _chargeTimer = 0f;
             _isCharging = false;
+            _isBursting = false;
+            _isHoldingTrigger = false;
         }
+    }
+
+    public enum TriggerType
+    {
+        Semi_Automatic,
+        Full_Automatic,
     }
 }

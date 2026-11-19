@@ -7,19 +7,20 @@ public class WeaponSO : ScriptableObject
     [Header("// General")]
     [SerializeField] Sprite _iconSprite = null;
     [SerializeField] WeaponBehaviour _weaponPrefab = null;
-    [SerializeField] string _id = null;
-    [SerializeField] string _displayName = null;
+    [SerializeField] string _id = "warmaker_mg";
+    [SerializeField] string _displayName = "Warmaker";
     [SerializeField] string _typeName = "Machine Gun";
 
-    [Header("// Holster")]
-    [SerializeField] Vector3 _holsterPosition = default;
-    [SerializeField] Vector3 _holsterEuler = default;
+    //[Header("// Holster")]
+    //[SerializeField] Vector3 _holsterPosition = default;
+    //[SerializeField] Vector3 _holsterEuler = default;
 
     [Header("// Projectiles")]
     [SerializeField] ProjectileSO _projectileSO = null;
     //[SerializeField] ProjectileSO _chargedProjectileSO = null;
 
     [Header("// Stats")]
+    [SerializeField] TriggerType _triggerType = default;
     [SerializeField] WeaponStats _stats = null;
     [SerializeField] ProjectileStats _projectileStats = null;
 
@@ -28,13 +29,14 @@ public class WeaponSO : ScriptableObject
     public string Id { get => _id; private set => _id = value; }
     public string DisplayName { get => _displayName; private set => _displayName = value; }
     public string TypeName { get => _typeName; }
-    public Vector3 HolsterPosition { get => _holsterPosition; private set => _holsterPosition = value; }
-    public Vector3 HolsterEuler { get => _holsterEuler; private set => _holsterEuler = value; }
+    //public Vector3 HolsterPosition { get => _holsterPosition; private set => _holsterPosition = value; }
+    //public Vector3 HolsterEuler { get => _holsterEuler; private set => _holsterEuler = value; }
     public ProjectileSO ProjectileSO { get => _projectileSO; private set => _projectileSO = value; }
     //public ProjectileSO ChargedProjectileSO { get => _chargedProjectileSO; private set => _chargedProjectileSO = value; }
 
     public WeaponStats Stats { get => _stats; private set => _stats = value; }
     public ProjectileStats ProjectileStats { get => _projectileStats; private set => _projectileStats = value; }
+    public TriggerType TriggerType { get => _triggerType; }
 
     public bool HasChargeTime()
     {

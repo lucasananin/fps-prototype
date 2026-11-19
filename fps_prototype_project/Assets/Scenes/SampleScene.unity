@@ -555,7 +555,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 201753451}
-  - component: {fileID: 201753452}
+  - component: {fileID: 201753454}
   - component: {fileID: 201753453}
   m_Layer: 7
   m_Name: Weapon_Base
@@ -589,29 +589,6 @@ Transform:
   - {fileID: 637820579}
   m_Father: {fileID: 719648315}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &201753452
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 201753450}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2848d61e8f9a3634297adc66b3a9f875, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FPS.AutoWeapon
-  _weaponSO: {fileID: 11400000, guid: 30c87dd07fe5cf9449fd235de1550b5b, type: 2}
-  _muzzle: {fileID: 707294701}
-  _entitySource: {fileID: 0}
-  _ammoHandler: {fileID: 0}
-  _nextFire: 0
-  _chargeTimer: 0
-  _isCharging: 0
-  _currentHeat: 0
-  _overheatTimer: 0
-  _isOverheated: 0
-  _isHoldingTrigger: 0
 --- !u!114 &201753453
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -624,8 +601,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15d1983dd9608f64ababc89945ad54bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FPS.WeaponShootListener
-  _weapon: {fileID: 201753452}
+  _weapon: {fileID: 201753454}
   _content: {fileID: 862710938}
+--- !u!114 &201753454
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 201753450}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f6fb035f859b534ea5d12c38c65bdc8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FPS.WeaponBehaviour
+  _weaponSO: {fileID: 11400000, guid: 30c87dd07fe5cf9449fd235de1550b5b, type: 2}
+  _muzzle: {fileID: 862710939}
+  _entitySource: {fileID: 0}
+  _ammoHandler: {fileID: 0}
+  _nextFire: 0
+  _chargeTimer: 0
+  _isCharging: 0
+  _currentHeat: 0
+  _overheatTimer: 0
+  _isOverheated: 0
 --- !u!1 &243951542
 GameObject:
   m_ObjectHideFlags: 0
@@ -2247,6 +2246,7 @@ GameObject:
   m_Component:
   - component: {fileID: 787119903}
   - component: {fileID: 787119902}
+  - component: {fileID: 787119906}
   - component: {fileID: 787119901}
   - component: {fileID: 787119899}
   - component: {fileID: 787119900}
@@ -2429,16 +2429,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e8d41fa26d53604d8d617ab4c1b103b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FPS.PlayerWeaponHandler
-  _entitySource: {fileID: 0}
+  _entitySource: {fileID: 787119906}
   _ammoHandler: {fileID: 0}
   _input: {fileID: 787119901}
   _maxWeaponsCount: 2
   _swapInputDelay: 0.3
   _weaponsList:
-  - {fileID: 201753452}
+  - {fileID: 201753454}
   _currentWeapon: {fileID: 0}
   _currentWeaponIndex: 0
   _isWaitingSwapDelay: 0
+--- !u!114 &787119906
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 787119897}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 528f1b7656f4d5a4fbc51e73cba00a90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FPS.PlayerEntity
+  _entitySO: {fileID: 11400000, guid: d8aef1b2d775bfb4993c515a49b72816, type: 2}
 --- !u!1 &787292430
 GameObject:
   m_ObjectHideFlags: 0

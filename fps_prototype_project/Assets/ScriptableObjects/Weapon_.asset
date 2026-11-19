@@ -14,12 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponSO
   _iconSprite: {fileID: 0}
   _weaponPrefab: {fileID: 0}
-  _id: 
-  _displayName: 
+  _id: warmaker_mg
+  _displayName: Warmaker
   _typeName: Machine Gun
-  _holsterPosition: {x: 0, y: 0, z: 0}
-  _holsterEuler: {x: 0, y: 0, z: 0}
   _projectileSO: {fileID: 11400000, guid: fcfe4f87d4505f1458db5baac5371813, type: 2}
+  _triggerType: 0
   _stats:
     _damage: 1
     _explosiveDamage: 1
