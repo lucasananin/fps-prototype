@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -166,8 +167,8 @@ namespace FPS
         {
             for (int i = 0; i < _so.Stats.ProjectilesPerShot; i++)
             {
-                Debug.Log($"Shoot!");
-                continue;
+                //Debug.Log($"Shoot!");
+                //continue;
 
                 var _position = CalculateProjectilePosition(_projectileSO);
                 var _rotation = CalculateProjectileRotation(i);
@@ -185,16 +186,22 @@ namespace FPS
 
         protected Vector3 CalculateProjectilePosition(ProjectileSO _projectileSO)
         {
-            if (_projectileSO.SpawnPositionOffset == Vector2.zero)
-            {
-                return _muzzle.position;
-            }
-            else
-            {
-                Vector3 _xOffset = transform.right * _projectileSO.SpawnPositionOffset.x;
-                Vector3 _yOffset = transform.up * _projectileSO.SpawnPositionOffset.y;
-                return _muzzle.position + _xOffset + _yOffset;
-            }
+            var _spawnOffset = _projectileSO.SpawnPositionOffset;
+            Vector3 _xOffset = transform.right * _spawnOffset.x;
+            Vector3 _yOffset = transform.up * _spawnOffset.y;
+            Vector3 _zOffset = transform.forward * _spawnOffset.z;
+            return _muzzle.position + _xOffset + _yOffset + _zOffset;
+            //if (_projectileSO.SpawnPositionOffset == Vector2.zero)
+            //{
+            //    return _muzzle.position;
+            //}
+            //else
+            //{
+            //    Vector3 _xOffset = transform.right * _projectileSO.SpawnPositionOffset.x;
+            //    Vector3 _yOffset = transform.up * _projectileSO.SpawnPositionOffset.y;
+            //    Vector3 _zOffset = transform.forward * _projectileSO.SpawnPositionOffset.z;
+            //    return _muzzle.position + _xOffset + _yOffset;
+            //}
         }
 
         protected void UpdateChargeTimer()

@@ -15,7 +15,7 @@ MonoBehaviour:
   _id: warmaker_mg
   _displayName: Warmaker
   _typeName: Machine Gun
-  _weaponPrefab: {fileID: 0}
+  _prefab: {fileID: 0}
   _projectileSO: {fileID: 11400000, guid: fcfe4f87d4505f1458db5baac5371813, type: 2}
   _stats:
     _triggerType: 1
@@ -23,7 +23,7 @@ MonoBehaviour:
     _explosiveDamage: 1
     _fireRate: 0.1
     _chargeDuration: 0
-    _maxHeat: 99
+    _maxHeat: 0
     _heatPerShot: 3
     _heatDecreasePerSecond: 10
     _overheatDuration: 2
@@ -36,7 +36,7 @@ MonoBehaviour:
     _burstRate: 0.1
     _shotsPerBurst: 3
   _projectileStats:
-    _destroyTimeRange: {x: 0, y: 0}
+    _destroyTimeRange: {x: 10, y: 10}
     _canDamageProjectiles: 0
     _explosionRadius: 0
     _canDamageSource: 0
@@ -45,7 +45,7 @@ MonoBehaviour:
     _canAutoAim: 0
     _autoAimDistance: 0
     _autoAimAngle: 0
-    _moveSpeedRange: {x: 0, y: 0}
+    _moveSpeedRange: {x: 400, y: 400}
     _scaleMultiplier: 1
     _destroyOnStop: 0
     _useAccelerationCurve: 0

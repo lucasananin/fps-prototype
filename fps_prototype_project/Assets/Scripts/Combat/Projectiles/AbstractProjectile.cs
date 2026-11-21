@@ -4,10 +4,10 @@ using UnityEngine;
 
 namespace FPS
 {
-    public abstract class ProjectileBehaviour : MonoBehaviour
+    public abstract class AbstractProjectile : MonoBehaviour
     {
-        [Header("// Debug - Projectile")]
-        [SerializeField] protected ShootInfo _shootModel = null;
+        [Header("// Projectile - Debug")]
+        [SerializeField] protected ShootInfo _shootInfo = null;
         [SerializeField] protected ProjectileSO _projectileSO = null;
         [SerializeField] protected ProjectileStats _stats = null;
         [SerializeField] protected float _timeUntilDestroy = 0f;
@@ -15,26 +15,26 @@ namespace FPS
         [SerializeField] protected int _currentPierceCount = 0;
         [SerializeField] protected List<string> _tagsList = null;
 
-        private Collider2D[] _explosionResults = new Collider2D[9];
-        private RaycastHit2D[] _obstacleResults = new RaycastHit2D[9];
-        private List<AbstractEntity> _entitiesFound = new List<AbstractEntity>();
+        private readonly Collider[] _explosionResults = new Collider[9];
+        private readonly RaycastHit[] _obstacleResults = new RaycastHit[9];
+        private readonly List<AbstractEntity> _entitiesFound = new();
 
         public event System.Action<ShootInfo> OnInit = null;
-        public event System.Action<RaycastHit2D> OnRaycastHit = null;
+        public event System.Action<RaycastHit> OnRaycastHit = null;
         public event System.Action OnDestroy_TimerEnd = null;
         public event System.Action OnDestroy_Stop = null;
         public event System.Action OnExplode = null;
 
         const string PROJECTILE_TAG = "Projectile";
 
-        public ShootInfo ShootModel { get => _shootModel; }
+        public ShootInfo ShootModel { get => _shootInfo; }
         public float TimeUntilDestroy { get => _timeUntilDestroy; }
 
-        public virtual void Init(ShootInfo _newShootModel)
+        public virtual void Init(ShootInfo _shootInfoValue)
         {
-            _shootModel = _newShootModel;
-            _projectileSO = _newShootModel.ProjectileSO;
-            _stats = _newShootModel.WeaponSource.WeaponSO.ProjectileStats;
+            _shootInfo = _shootInfoValue;
+            _projectileSO = _shootInfoValue.ProjectileSO;
+            _stats = _shootInfoValue.WeaponSource.WeaponSO.ProjectileStats;
             UpdateTagsList();
             SetDestroyTimer();
             TryAutoRotate();
@@ -42,10 +42,10 @@ namespace FPS
 
         protected void SendInitEvent()
         {
-            OnInit?.Invoke(_shootModel);
+            OnInit?.Invoke(_shootInfo);
         }
 
-        protected void SendRaycastHitEvent(RaycastHit2D _value)
+        protected void SendRaycastHitEvent(RaycastHit _value)
         {
             OnRaycastHit?.Invoke(_value);
         }
@@ -73,7 +73,7 @@ namespace FPS
 
         public void Explode(Vector3 _point)
         {
-            int _hits = Physics2D.OverlapCircleNonAlloc(_point, _stats.ExplosionRadius, _explosionResults, _projectileSO.LayerMask);
+            int _hits = Physics.OverlapSphereNonAlloc(_point, _stats.ExplosionRadius, _explosionResults, _projectileSO.LayerMask);
 
             for (int i = 0; i < _hits; i++)
             {
@@ -96,7 +96,7 @@ namespace FPS
         private bool HasObstacleBetween(Vector3 _origin, Vector3 _targetPoint)
         {
             var _vector = _targetPoint - _origin;
-            var _rayHitCount = Physics2D.RaycastNonAlloc(_origin, _vector.normalized, _obstacleResults, _vector.magnitude, _projectileSO.ObstacleLayerMask);
+            var _rayHitCount = Physics.RaycastNonAlloc(_origin, _vector.normalized, _obstacleResults, _vector.magnitude, _projectileSO.ObstacleLayerMask);
             bool _hitObstacle = _rayHitCount > 0;
             return _hitObstacle;
         }
@@ -109,7 +109,7 @@ namespace FPS
 
             _entitiesFound.Clear();
             var _myPosition = transform.position;
-            var _hits = Physics2D.OverlapCircleNonAlloc(_myPosition, _stats.AutoAimDistance, _explosionResults, _so.EntityLayerMask);
+            var _hits = Physics.OverlapSphereNonAlloc(_myPosition, _stats.AutoAimDistance, _explosionResults, _so.EntityLayerMask);
 
             for (int i = 0; i < _hits; i++)
             {
@@ -164,7 +164,7 @@ namespace FPS
 
         public bool HasHitSource(GameObject _gameobjectHit)
         {
-            return _gameobjectHit == _shootModel.EntitySource.gameObject;
+            return _gameobjectHit == _shootInfo.EntitySource.gameObject;
         }
 
         public bool HasAvailableTag(GameObject _gameObjectHit)

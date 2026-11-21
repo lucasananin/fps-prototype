@@ -49,6 +49,29 @@ namespace FPS
             return _totalFireRate + _stats.BurstRate + _offset;
         }
 
+        //public Quaternion GetProjectileRotation(int _projectileIndex)
+        //{
+        //    if (_stats.ShootAngle <= 0)
+        //    {
+        //        return Quaternion.identity;
+        //    }
+
+        //    float _halfAngle = _stats.ShootAngle / 2f;
+
+        //    if (_stats.ArcMode == ShootArcMode.Spread && _stats.ProjectilesPerShot > 1)
+        //    {
+        //        float _sector = _stats.ShootAngle;
+        //        float _divisionCount = _sector / (_stats.ProjectilesPerShot - 1);
+        //        float _angle = -_halfAngle + _divisionCount * _projectileIndex;
+        //        return Quaternion.AngleAxis(_angle, Vector3.forward);
+        //    }
+        //    else
+        //    {
+        //        float _randomAngle = Random.Range(-_halfAngle, _halfAngle);
+        //        return Quaternion.AngleAxis(_randomAngle, Vector3.forward);
+        //    }
+        //}
+
         public Quaternion GetProjectileRotation(int _projectileIndex)
         {
             if (_stats.ShootAngle <= 0)
@@ -60,15 +83,18 @@ namespace FPS
 
             if (_stats.ArcMode == ShootArcMode.Spread && _stats.ProjectilesPerShot > 1)
             {
-                float _sector = _stats.ShootAngle;
-                float _divisionCount = _sector / (_stats.ProjectilesPerShot - 1);
-                float _angle = -_halfAngle + _divisionCount * _projectileIndex;
-                return Quaternion.AngleAxis(_angle, Vector3.forward);
+                // Evenly spaced pellets around the edge of the cone
+                float _roll = 360f / _stats.ProjectilesPerShot * _projectileIndex;
+                return Quaternion.AngleAxis(_roll, Vector3.forward)
+                     * Quaternion.AngleAxis(_halfAngle, Vector3.up);
             }
             else
             {
-                float _randomAngle = Random.Range(-_halfAngle, _halfAngle);
-                return Quaternion.AngleAxis(_randomAngle, Vector3.forward);
+                // Random direction inside the cone
+                float _roll = Random.Range(0f, 360f);
+                float _tilt = _halfAngle * Mathf.Sqrt(Random.value);
+                return Quaternion.AngleAxis(_roll, Vector3.forward)
+                     * Quaternion.AngleAxis(_tilt, Vector3.up);
             }
         }
     }

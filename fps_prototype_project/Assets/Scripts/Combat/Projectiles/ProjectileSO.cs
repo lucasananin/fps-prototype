@@ -7,19 +7,19 @@ namespace FPS
     public class ProjectileSO : ScriptableObject
     {
         [Header("// General")]
-        [SerializeField] ProjectileBehaviour _prefab = null;
+        [SerializeField] AbstractProjectile _prefab = null;
         [SerializeField] AmmoSO _ammoSO = null;
         [SerializeField] LayerMask _layerMask = default;
         [SerializeField] LayerMask _entityLayerMask = default;
         [SerializeField] LayerMask _obstacleLayerMask = default;
         [SerializeField] Vector2 _spawnPositionOffset = default;
 
-        public ProjectileBehaviour Prefab { get => _prefab; private set => _prefab = value; }
+        public AbstractProjectile Prefab { get => _prefab; private set => _prefab = value; }
         public AmmoSO AmmoSO { get => _ammoSO; private set => _ammoSO = value; }
         public LayerMask LayerMask { get => _layerMask; private set => _layerMask = value; }
         public LayerMask EntityLayerMask { get => _entityLayerMask; private set => _entityLayerMask = value; }
         public LayerMask ObstacleLayerMask { get => _obstacleLayerMask; private set => _obstacleLayerMask = value; }
-        public Vector2 SpawnPositionOffset { get => _spawnPositionOffset; private set => _spawnPositionOffset = value; }
+        public Vector3 SpawnPositionOffset { get => _spawnPositionOffset; private set => _spawnPositionOffset = value; }
     }
 
     [System.Serializable]
@@ -41,8 +41,6 @@ namespace FPS
         [SerializeField] bool _canAutoAim = false;
         [SerializeField] float _autoAimDistance = 0f;
         [SerializeField] float _autoAimAngle = 0f;
-
-        //[Header("- PROJECTILE SPECIFICS -", null, HeaderAlignments.Centered)]
 
         [Header("// Physical Projectile: Properties")]
         [SerializeField] Vector2 _moveSpeedRange = default;

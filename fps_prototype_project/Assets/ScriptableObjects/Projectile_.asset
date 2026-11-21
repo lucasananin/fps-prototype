@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 798617e1a5167f5408b196fd26490e41, type: 3}
   m_Name: Projectile_
   m_EditorClassIdentifier: Assembly-CSharp::FPS.ProjectileSO
-  _prefab: {fileID: 0}
+  _prefab: {fileID: 4686243445508069299, guid: 32ee2b97e357af74dbd466dd0ddf491c, type: 3}
   _ammoSO: {fileID: 0}
   _layerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 65
   _entityLayerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   _obstacleLayerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1
   _spawnPositionOffset: {x: 0, y: 0}
