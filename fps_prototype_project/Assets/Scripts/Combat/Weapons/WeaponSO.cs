@@ -108,7 +108,7 @@ namespace FPS
         [SerializeField, Range(0, 36)] int _ammoPerShot = 1;
 
         [Header("// Semi-Auto Properties")]
-        [SerializeField] bool _isAutoChargeType = false;
+        [SerializeField] bool _autoFireOnFullCharge = false;
         [SerializeField, Range(0f, 2f)] float _burstRate = 0f;
         [SerializeField, Range(0, 99)] int _shotsPerBurst = 0;
 
@@ -126,7 +126,7 @@ namespace FPS
         public ShootArcMode ArcMode { get => _arcMode; }
         public int ProjectilesPerShot { get => _projectilesPerShot; }
         public int AmmoPerShot { get => _ammoPerShot; }
-        public bool IsAutoChargeType { get => _isAutoChargeType; }
+        public bool AutoFireOnFullCharge { get => _autoFireOnFullCharge; }
         public float BurstRate { get => _burstRate; }
         public int ShotsPerBurst { get => _shotsPerBurst; }
     }

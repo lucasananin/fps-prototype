@@ -67,7 +67,7 @@ namespace FPS
                 {
                     UpdateChargeTimer();
 
-                    if (HasEnoughChargeTimer() && _so.Stats.IsAutoChargeType)
+                    if (HasEnoughChargeTimer() && _so.Stats.AutoFireOnFullCharge)
                         _isBursting = true;
                 }
 
@@ -138,7 +138,7 @@ namespace FPS
         {
             if (_so.IsTriggerEqual(TriggerType.Semi_Automatic))
             {
-                if (!_so.Stats.IsAutoChargeType && HasEnoughChargeTimer())
+                if (!_so.Stats.AutoFireOnFullCharge && HasEnoughChargeTimer())
                 {
                     _isBursting = true;
                 }
@@ -205,6 +205,7 @@ namespace FPS
 
         protected bool HasEnoughChargeTimer()
         {
+            if (!_so.HasChargeTime()) return false;
             return _chargeTimer >= _so.Stats.ChargeDuration;
         }
 
