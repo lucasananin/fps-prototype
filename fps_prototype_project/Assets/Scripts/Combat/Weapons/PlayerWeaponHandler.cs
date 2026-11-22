@@ -122,7 +122,7 @@ namespace FPS
             if (_weaponsList.Count >= _maxWeaponAmount)
             {
                 _weaponsList[_currentWeaponIndex] = _newWeapon;
-                _droppedWeaponSO = _currentWeapon.WeaponSO;
+                _droppedWeaponSO = _currentWeapon.SO;
                 Destroy(_currentWeapon.gameObject);
                 SetCurrentWeapon();
             }
@@ -182,7 +182,7 @@ namespace FPS
 
             for (int i = 0; i < _count; i++)
             {
-                var _ammoSO = _weaponsList[i].WeaponSO.ProjectileSO.AmmoSO;
+                var _ammoSO = _weaponsList[i].SO.ProjectileSO.AmmoSO;
                 _list.Add(_ammoSO);
             }
 

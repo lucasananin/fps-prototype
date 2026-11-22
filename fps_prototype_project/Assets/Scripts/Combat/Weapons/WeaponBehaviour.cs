@@ -1,4 +1,3 @@
-using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -30,7 +29,7 @@ namespace FPS
         public event UnityAction OnPullTrigger = null;
         public event UnityAction OnReleaseTrigger = null;
 
-        public WeaponSO WeaponSO { get => _so; }
+        public WeaponSO SO { get => _so; }
         public Transform Muzzle { get => _muzzle; }
         public float ChargingTime { get => _so.Stats.ChargeDuration; }
 
@@ -167,9 +166,6 @@ namespace FPS
         {
             for (int i = 0; i < _so.Stats.ProjectilesPerShot; i++)
             {
-                //Debug.Log($"Shoot!");
-                //continue;
-
                 var _position = CalculateProjectilePosition(_projectileSO);
                 var _rotation = CalculateProjectileRotation(i);
                 var _projectileInstance = Instantiate(_projectileSO.Prefab, _position, _rotation);
@@ -191,17 +187,6 @@ namespace FPS
             Vector3 _yOffset = transform.up * _spawnOffset.y;
             Vector3 _zOffset = transform.forward * _spawnOffset.z;
             return _muzzle.position + _xOffset + _yOffset + _zOffset;
-            //if (_projectileSO.SpawnPositionOffset == Vector2.zero)
-            //{
-            //    return _muzzle.position;
-            //}
-            //else
-            //{
-            //    Vector3 _xOffset = transform.right * _projectileSO.SpawnPositionOffset.x;
-            //    Vector3 _yOffset = transform.up * _projectileSO.SpawnPositionOffset.y;
-            //    Vector3 _zOffset = transform.forward * _projectileSO.SpawnPositionOffset.z;
-            //    return _muzzle.position + _xOffset + _yOffset;
-            //}
         }
 
         protected void UpdateChargeTimer()

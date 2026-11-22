@@ -1,9 +1,11 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace lutilities.TagCollections
 {
-    [CreateAssetMenu(fileName = "TagCollection_", menuName = "Scriptable Objects/Tag Collection")]
+    [CreateAssetMenu(fileName = "Tags_", menuName = "Scriptable Objects/Tag Collection")]
     public class TagCollection : ScriptableObject
     {
         [SerializeField] private TagEntry[] _tags;
@@ -11,6 +13,14 @@ namespace lutilities.TagCollections
         public bool Contains(string tag)
         {
             return _tags != null && Array.Exists(_tags, t => t.Value == tag);
+        }
+
+        public List<string> GetTags()
+        {
+            if (_tags == null)
+                return new List<string>();
+
+            return _tags.Select(t => t.Value).ToList();
         }
 
         private void OnValidate()

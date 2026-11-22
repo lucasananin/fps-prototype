@@ -1,16 +1,16 @@
-using lutilities.Damage;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace FPS
 {
     public abstract class AbstractEntity : MonoBehaviour
     {
-        [SerializeField] protected AbstractEntitySO _entitySO = null;
+        [SerializeField] protected AbstractEntitySO _so = null;
         //[SerializeField] protected Health _healthBehaviour = null;
 
         public T GetEntitySO<T>() where T : AbstractEntitySO
         {
-            return _entitySO as T;
+            return _so as T;
         }
 
         //public bool IsAlive()
@@ -18,15 +18,15 @@ namespace FPS
         //    return _healthBehaviour.IsAlive();
         //}
 
-        //public string[] GetOpponentTags()
-        //{
-        //    return _entitySO.OpponentTags.Tags;
-        //}
+        public List<string> GetDamageableTags()
+        {
+            return _so.DamageableTags.GetTags();
+        }
 
-        //public string[] GetProjectileHitTags()
-        //{
-        //    return _entitySO.ProjectileHitTags.Tags;
-        //}
+        public List<string> GetOpponentTags()
+        {
+            return _so.OpponentTags.GetTags();
+        }
 
         public abstract bool IsMoving();
     }

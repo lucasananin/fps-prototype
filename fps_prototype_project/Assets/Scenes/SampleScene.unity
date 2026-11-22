@@ -2556,7 +2556,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 528f1b7656f4d5a4fbc51e73cba00a90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FPS.PlayerEntity
-  _entitySO: {fileID: 11400000, guid: d8aef1b2d775bfb4993c515a49b72816, type: 2}
+  _so: {fileID: 11400000, guid: d8aef1b2d775bfb4993c515a49b72816, type: 2}
 --- !u!1 &787292430
 GameObject:
   m_ObjectHideFlags: 0

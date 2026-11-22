@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff6e300517275d14484cf5958c77a1fb, type: 3}
   m_Name: Entity_Player
   m_EditorClassIdentifier: Assembly-CSharp::FPS.PlayerEntitySO
+  _damageableTags: {fileID: 11400000, guid: 71e39f0944684664e926b841bfcf15ba, type: 2}
   _opponentTags: {fileID: 0}
-  _projectileHitTag: {fileID: 0}

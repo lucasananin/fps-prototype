@@ -49,29 +49,6 @@ namespace FPS
             return _totalFireRate + _stats.BurstRate + _offset;
         }
 
-        //public Quaternion GetProjectileRotation(int _projectileIndex)
-        //{
-        //    if (_stats.ShootAngle <= 0)
-        //    {
-        //        return Quaternion.identity;
-        //    }
-
-        //    float _halfAngle = _stats.ShootAngle / 2f;
-
-        //    if (_stats.ArcMode == ShootArcMode.Spread && _stats.ProjectilesPerShot > 1)
-        //    {
-        //        float _sector = _stats.ShootAngle;
-        //        float _divisionCount = _sector / (_stats.ProjectilesPerShot - 1);
-        //        float _angle = -_halfAngle + _divisionCount * _projectileIndex;
-        //        return Quaternion.AngleAxis(_angle, Vector3.forward);
-        //    }
-        //    else
-        //    {
-        //        float _randomAngle = Random.Range(-_halfAngle, _halfAngle);
-        //        return Quaternion.AngleAxis(_randomAngle, Vector3.forward);
-        //    }
-        //}
-
         public Quaternion GetProjectileRotation(int _projectileIndex)
         {
             if (_stats.ShootAngle <= 0)
@@ -123,12 +100,12 @@ namespace FPS
         [SerializeField, Range(1f, 9f)] float _overheatDecreaseMultiplier = 2f;
 
         [Header("// Precision")]
-        [SerializeField, Range(0, 360)] float _shootAngle = 0;
+        [SerializeField, Range(0, 135)] float _shootAngle = 0;
         [SerializeReference] ShootArcMode _arcMode = default;
 
         [Header("// Ammo")]
         [SerializeField, Range(1, 36)] int _projectilesPerShot = 1;
-        [SerializeField, Range(0, 99)] int _ammoPerShot = 1;
+        [SerializeField, Range(0, 36)] int _ammoPerShot = 1;
 
         [Header("// Semi-Auto Properties")]
         [SerializeField] bool _isAutoChargeType = false;
