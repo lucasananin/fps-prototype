@@ -28,11 +28,11 @@ MonoBehaviour:
     _heatDecreasePerSecond: 10
     _overheatDuration: 2
     _overheatDecreaseMultiplier: 2
-    _shootAngle: 5
+    _shootAngle: 0
     _arcMode: 0
     _projectilesPerShot: 1
     _ammoPerShot: 1
-    _isAutoChargeType: 1
+    _autoFireOnFullCharge: 0
     _burstRate: 0
     _shotsPerBurst: 0
   _projectileStats:

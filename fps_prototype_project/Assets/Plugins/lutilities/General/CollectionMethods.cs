@@ -84,5 +84,16 @@ namespace lutilities.General
                 return distanceA.CompareTo(distanceB);
             });
         }
+
+        public static void SortByDistance<T>(T[] array, Vector3 referencePosition, Func<T, Vector3> getPosition)
+        {
+            Array.Sort(array, (a, b) =>
+            {
+                float distanceA = (getPosition(a) - referencePosition).sqrMagnitude;
+                float distanceB = (getPosition(b) - referencePosition).sqrMagnitude;
+
+                return distanceA.CompareTo(distanceB);
+            });
+        }
     }
 }
