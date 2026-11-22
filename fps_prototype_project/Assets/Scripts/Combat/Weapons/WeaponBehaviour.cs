@@ -7,6 +7,12 @@ namespace FPS
     {
         [SerializeField] protected WeaponSO _so = null;
         [SerializeField] protected Transform _muzzle = null;
+        [SerializeField] private bool _alignToScreenCenter = true;
+        [SerializeField] private float _maxAimDistance = 100f;
+        [SerializeField] private LayerMask _aimMask = default;
+        public Transform _aimTarget = null;
+
+        private Camera _camera;
 
         protected AbstractEntity _entitySource = null;
         protected AmmoHandler _ammoHandler = null;
@@ -138,7 +144,7 @@ namespace FPS
         {
             if (_so.IsTriggerEqual(TriggerType.Semi_Automatic))
             {
-                if (!_so.Stats.AutoFireOnFullCharge && HasEnoughChargeTimer())
+                if (!_so.Stats.AutoFireOnFullCharge && HasEnoughChargeTimer() && _so.HasChargeTime())
                 {
                     _isBursting = true;
                 }
@@ -164,20 +170,45 @@ namespace FPS
 
         private void PrepareProjectile(ProjectileSO _projectileSO)
         {
+            var _aimRotation = GetAimRotation();
+
             for (int i = 0; i < _so.Stats.ProjectilesPerShot; i++)
             {
                 var _position = CalculateProjectilePosition(_projectileSO);
-                var _rotation = CalculateProjectileRotation(i);
+                var _rotation = _aimRotation * _so.GetProjectileRotation(i);
                 var _projectileInstance = Instantiate(_projectileSO.Prefab, _position, _rotation);
                 var _shootInfo = new ShootInfo(_entitySource, this, _projectileSO);
                 _projectileInstance.Init(_shootInfo);
             }
         }
 
-        protected Quaternion CalculateProjectileRotation(int _projectileIndex)
+        protected Quaternion GetAimRotation()
         {
-            var _rotationOffset = _so.GetProjectileRotation(_projectileIndex);
-            return transform.rotation * _rotationOffset;
+            if (!_alignToScreenCenter)
+                return transform.rotation;
+
+            if (_camera == null)
+                _camera = Camera.main;
+
+            if (_camera == null)
+                return transform.rotation;
+
+            Ray _ray = _camera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+
+            Vector3 _aimPoint;
+            if (Physics.Raycast(_ray, out RaycastHit _hit, _maxAimDistance, _aimMask, QueryTriggerInteraction.Ignore))
+                _aimPoint = _hit.point;
+            else
+                _aimPoint = _ray.GetPoint(_maxAimDistance);
+
+            _aimTarget.position = _aimPoint;
+            Vector3 _direction = _aimPoint - _muzzle.position;
+
+            // Aim point is too close or behind the muzzle (e.g. wall right in front of the camera)
+            if (_direction.sqrMagnitude < 0.01f || Vector3.Dot(_direction, _camera.transform.forward) < 0f)
+                return transform.rotation;
+
+            return Quaternion.LookRotation(_direction, Vector3.up);
         }
 
         protected Vector3 CalculateProjectilePosition(ProjectileSO _projectileSO)
@@ -205,7 +236,7 @@ namespace FPS
 
         protected bool HasEnoughChargeTimer()
         {
-            if (!_so.HasChargeTime()) return false;
+            //if (!_so.HasChargeTime()) return true;
             return _chargeTimer >= _so.Stats.ChargeDuration;
         }
 

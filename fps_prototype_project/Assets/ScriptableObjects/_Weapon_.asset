@@ -28,7 +28,7 @@ MonoBehaviour:
     _heatDecreasePerSecond: 10
     _overheatDuration: 2
     _overheatDecreaseMultiplier: 2
-    _shootAngle: 0
+    _shootAngle: 5
     _arcMode: 0
     _projectilesPerShot: 1
     _ammoPerShot: 1
