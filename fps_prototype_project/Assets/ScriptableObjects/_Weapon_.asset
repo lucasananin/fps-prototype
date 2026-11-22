@@ -40,6 +40,6 @@ MonoBehaviour:
     _explosionRadius: 0
     _maxPierceCount: 2
     _moveSpeed: 100
-    _bounceChance: 50
+    _bounceChance: 0
     _maxBounces: 1
     _maxCastDistance: 0
