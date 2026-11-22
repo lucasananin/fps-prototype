@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using lutilities.Damage;
+using lutilities.General;
 using UnityEngine;
 
 namespace FPS
@@ -42,11 +43,15 @@ namespace FPS
             var _hits = Physics.SphereCastNonAlloc(transform.position, _dummyCollider.radius, _displacement.normalized, _results, _displacement.magnitude, _so.LayerMask);
             var _nextPosition = _rb.position + _displacement;
 
+            if (_hits > 1)
+            {
+                CollectionMethods.SortByDistance(_results, transform.position, hit => hit.collider == null ? Vector3.positiveInfinity : hit.transform.position);
+            }
+
             for (int i = 0; i < _hits; i++)
             {
                 var _raycastHit = _results[i];
                 var _colliderHit = _raycastHit.collider;
-                Debug.Log($"_colliderHit = {_colliderHit}", _colliderHit);
 
                 if (HasHitSource(_colliderHit.gameObject)) continue;
                 if (_collidersHit.Contains(_colliderHit)) continue;
