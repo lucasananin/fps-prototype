@@ -13,11 +13,15 @@ namespace FPS
         [SerializeField, Range(1, 9)] int _maxWeaponAmount = 2;
         [SerializeField, Range(0f, 1f)] float _changeWeaponInputDelay = 0.3f;
 
+        [SerializeField] private float _maxAimDistance = 100f;
+        [SerializeField] private LayerMask _aimMask = default;
+        private Camera _camera;
+
         [Header("// Debug")]
         [SerializeField] List<WeaponBehaviour> _weaponsList = null;
-        [SerializeField] WeaponBehaviour _currentWeapon = null;
-        [SerializeField] int _currentWeaponIndex = 0;
-        [SerializeField] bool _isWaitingChangeWeaponDelay = false;
+        private WeaponBehaviour _currentWeapon = null;
+        private int _currentWeaponIndex = 0;
+        private bool _isWaitingChangeWeaponDelay = false;
 
         public event UnityAction OnWeaponAdded = null;
         public event UnityAction OnWeaponSwapped = null;
@@ -26,6 +30,8 @@ namespace FPS
         {
             if (_entitySource == null)
                 _entitySource = GetComponent<PlayerEntity>();
+
+            _camera = Camera.main;
 
             SetCurrentWeapon();
         }
@@ -97,8 +103,9 @@ namespace FPS
         {
             if (_weaponsList.Count <= 0) return;
 
+            var _initInfo = new WeaponInitInfo(_entitySource, _ammoHandler, _camera, _aimMask, _maxAimDistance);
             _currentWeapon = _weaponsList[_currentWeaponIndex];
-            _currentWeapon.Init(_entitySource, _ammoHandler);
+            _currentWeapon.Init(_initInfo);
 
             UpdateVisuals();
         }

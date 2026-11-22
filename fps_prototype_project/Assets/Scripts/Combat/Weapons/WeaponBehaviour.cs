@@ -7,12 +7,11 @@ namespace FPS
     {
         [SerializeField] protected WeaponSO _so = null;
         [SerializeField] protected Transform _muzzle = null;
-        [SerializeField] private bool _alignToScreenCenter = true;
-        [SerializeField] private float _maxAimDistance = 100f;
-        [SerializeField] private LayerMask _aimMask = default;
-        public Transform _aimTarget = null;
+        //[SerializeField] private bool _alignToScreenCenter = true;
 
         private Camera _camera;
+        private LayerMask _aimMask = default;
+        private float _maxAimDistance = 100f;
 
         protected AbstractEntity _entitySource = null;
         protected AmmoHandler _ammoHandler = null;
@@ -56,10 +55,13 @@ namespace FPS
             UpdateOverheatState();
         }
 
-        public virtual void Init(AbstractEntity _entityBehaviour, AmmoHandler _ammoHandler)
+        public virtual void Init(WeaponInitInfo _info)
         {
-            this._ammoHandler = _ammoHandler;
-            _entitySource = _entityBehaviour;
+            _entitySource = _info.entity;
+            _ammoHandler = _info.ammoHandler;
+            _camera = _info.camera;
+            _aimMask = _info.aimMask;
+            _maxAimDistance = _info.maxAimDistance;
             OnInit?.Invoke(this);
         }
 
@@ -184,8 +186,8 @@ namespace FPS
 
         protected Quaternion GetAimRotation()
         {
-            if (!_alignToScreenCenter)
-                return transform.rotation;
+            //if (!_alignToScreenCenter)
+            //    return transform.rotation;
 
             if (_camera == null)
                 _camera = Camera.main;
@@ -201,7 +203,6 @@ namespace FPS
             else
                 _aimPoint = _ray.GetPoint(_maxAimDistance);
 
-            _aimTarget.position = _aimPoint;
             Vector3 _direction = _aimPoint - _muzzle.position;
 
             // Aim point is too close or behind the muzzle (e.g. wall right in front of the camera)
