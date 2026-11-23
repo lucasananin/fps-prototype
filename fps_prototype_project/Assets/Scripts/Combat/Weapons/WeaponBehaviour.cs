@@ -150,7 +150,9 @@ namespace FPS
             }
 
             if (_so.HasChargeTime())
+            {
                 _isCharging = true;
+            }
 
             _isHoldingTrigger = true;
             OnPullTrigger?.Invoke();
@@ -168,7 +170,7 @@ namespace FPS
                 _chargeTimer = 0;
             }
 
-            if (_so.UseMagazine())
+            if (IsMagazineEmpty())
             {
                 TryReloadMagazine();
             }
@@ -392,7 +394,7 @@ namespace FPS
         [ContextMenu("ReloadMagazine()")]
         public void TryReloadMagazine()
         {
-            if (!_so.UseMagazine()) return;
+            if (IsMagazineFull()) return;
             if (!_ammoHandler.HasAmmo(_so)) return;
 
             StopAllCoroutines();
@@ -409,6 +411,16 @@ namespace FPS
             var _finalAmount = _amountNeeded <= _amountAvailable ? _amountNeeded : _amountAvailable;
             _magazineAmmo += _finalAmount;
             _ammoHandler.DecreaseAmmo(_so.AmmoSO, _finalAmount);
+        }
+
+        private bool IsMagazineFull()
+        {
+            return !_so.UseMagazine() || _magazineAmmo == _so.Stats.MagazineSize;
+        }
+
+        private bool IsMagazineEmpty()
+        {
+            return _so.UseMagazine() && _magazineAmmo == 0;
         }
 
         public int GetDamage()
