@@ -2,19 +2,19 @@ using UnityEngine;
 
 namespace FPS
 {
-    [CreateAssetMenu(fileName = "Projectile_", menuName = "Scriptable Objects/Combat/Projectile Data")]
+    [CreateAssetMenu(fileName = "Projectile_", menuName = "Scriptable Objects/Combat/Projectile")]
     public class ProjectileSO : ScriptableObject
     {
         [Header("// General")]
         [SerializeField] AbstractProjectile _prefab = null;
-        [SerializeField] AmmoSO _ammoSO = null;
+        //[SerializeField] AmmoSO _ammoSO = null;
         [SerializeField] LayerMask _layerMask = default;
         [SerializeField] LayerMask _entityLayerMask = default;
         [SerializeField] LayerMask _obstacleLayerMask = default;
         [SerializeField] Vector3 _spawnPositionOffset = default;
 
         public AbstractProjectile Prefab { get => _prefab; }
-        public AmmoSO AmmoSO { get => _ammoSO; }
+        //public AmmoSO AmmoSO { get => _ammoSO; }
         public LayerMask LayerMask { get => _layerMask; }
         public LayerMask EntityLayerMask { get => _entityLayerMask; }
         public LayerMask ObstacleLayerMask { get => _obstacleLayerMask; }

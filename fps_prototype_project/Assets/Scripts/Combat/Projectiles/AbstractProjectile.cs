@@ -8,7 +8,7 @@ namespace FPS
 {
     public abstract class AbstractProjectile : MonoBehaviour
     {
-        [Header("// Projectile - Debug")]
+        [Header("// Debug")]
         [SerializeField] protected ShootInfo _shootInfo = null;
         [SerializeField] protected ProjectileSO _so = null;
         [SerializeField] protected ProjectileStats _stats = null;

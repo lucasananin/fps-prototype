@@ -1,3 +1,4 @@
+using lutilities;
 using UnityEngine;
 
 namespace FPS
@@ -6,38 +7,45 @@ namespace FPS
     public class AmmoModel
     {
         [SerializeField] AmmoSO _so = null;
-        [SerializeField] int _quantity = 0;
+        [SerializeField] int _amount = 0;
 
-        public int Quantity { get => _quantity; private set => _quantity = value; }
+        public AmmoSO So { get => _so; }
+        public int Amount { get => _amount; }
+
+        public AmmoModel(AmmoSO so, int amount)
+        {
+            _so = so;
+            _amount = amount;
+        }
 
         public void DecreaseQuantity(int _value)
         {
-            _quantity -= _value;
+            _amount -= _value;
 
-            if (_quantity < 0)
-                _quantity = 0;
+            if (_amount < 0)
+                _amount = 0;
         }
 
-        public void RestoreQuantity()
+        public void RestoreAllAmount()
         {
-            _quantity = _so.MaxQuantity;
+            _amount = _so.MaxAmount;
         }
 
-        public void RestoreQuantity(int _percentage)
+        public void RestoreAmount(int _percentage)
         {
-            var _value = _so.MaxQuantity * (_percentage / 100f);
-            _quantity += Mathf.RoundToInt(_value);
-            _quantity = Mathf.Clamp(_quantity, 0, _so.MaxQuantity);
+            var _value = _so.MaxAmount * (_percentage / 100f);
+            _amount += Mathf.RoundToInt(_value);
+            _amount = Mathf.Clamp(_amount, 0, _so.MaxAmount);
         }
 
-        public bool HasEnoughQuantity(int _value)
+        public bool HasEnoughAmount(int _value)
         {
-            return _quantity >= _value;
+            return _amount >= _value;
         }
 
         public bool IsFull()
         {
-            return _quantity >= _so.MaxQuantity;
+            return _amount >= _so.MaxAmount;
         }
 
         public string GetId()
@@ -47,7 +55,12 @@ namespace FPS
 
         public float GetNormalizedValue()
         {
-            return _quantity / (_so.MaxQuantity * 1f);
+            return _amount / (_so.MaxAmount * 1f);
+        }
+
+        internal bool Equals(AmmoSO ammoType)
+        {
+            return StringMethods.AreStringsEqual(_so.Id, ammoType.Id);
         }
     }
 }

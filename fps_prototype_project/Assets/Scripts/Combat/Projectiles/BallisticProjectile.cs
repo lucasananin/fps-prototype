@@ -7,16 +7,15 @@ namespace FPS
 {
     public class BallisticProjectile : AbstractProjectile
     {
+        [SerializeField] List<Collider> _collidersHit = default;
+        //[SerializeField] Vector3 _defaultVelocity = default;
+        //[SerializeField] float _accelerationTime = 0f;
+        [SerializeField] float _moveSpeed = 0f;
+
         [Header("// Ballistic Projectile - Properties")]
         [SerializeField] Rigidbody _rb = null;
         [SerializeField] SphereCollider _dummyCollider = null;
         //[SerializeField] Transform _renderTransform = null;
-
-        [Header("// Ballistic Projectile - Debug")]
-        [SerializeField] List<Collider> _collidersHit = default;
-        //[SerializeField] Vector3 _defaultVelocity = default;
-        //[SerializeField] float _accelerationTime = 0f;
-        [SerializeField] float _speedMultiplier = 0f;
 
         private readonly RaycastHit[] _results = new RaycastHit[9];
 
@@ -39,7 +38,7 @@ namespace FPS
 
         private void CheckCollisions()
         {
-            var _displacement = _speedMultiplier * Time.fixedDeltaTime * transform.forward;
+            var _displacement = _moveSpeed * Time.fixedDeltaTime * transform.forward;
             var _hits = Physics.SphereCastNonAlloc(transform.position, _dummyCollider.radius, _displacement.normalized, _results, _displacement.magnitude, _so.LayerMask);
             var _nextPosition = _rb.position + _displacement;
 
@@ -91,7 +90,7 @@ namespace FPS
         {
             base.Init(_newShootModel);
             //_speedMultiplier = Random.Range(_stats.MoveSpeedRange.x, _stats.MoveSpeedRange.y);
-            _speedMultiplier = _stats.MoveSpeed;
+            _moveSpeed = _stats.MoveSpeed;
             _collidersHit.Clear();
             //UpdateScale();
             //InitAccelerationParameters();
@@ -156,8 +155,6 @@ namespace FPS
             var _reflect = Vector3.Reflect(transform.forward, _raycastHit.normal);
             transform.rotation = Quaternion.LookRotation(_reflect, Vector3.up);
             IncreaseBounceCount();
-            //_rb.linearVelocity = transform.right * _speedMultiplier;
-            //_defaultVelocity = _rb.linearVelocity;
         }
 
         //public float GetAccelerationCurveValue()

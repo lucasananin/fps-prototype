@@ -172,8 +172,8 @@ namespace FPS
         {
             _nextFire = 0;
             PrepareProjectile(_so.ProjectileSO);
-            DecreaseAmmo(_so.ProjectileSO);
-            IncreaseHeat(_so.Stats.HeatPerShot);
+            DecreaseAmmo();
+            IncreaseHeat();
             IncreaseShootAngle();
 
             if (_playerLook != null)
@@ -292,11 +292,11 @@ namespace FPS
 
         #region HEAT
 
-        protected void IncreaseHeat(float _value)
+        protected void IncreaseHeat()
         {
             if (!_so.CanOverheat()) return;
 
-            _currentHeat += _value;
+            _currentHeat += _so.Stats.HeatPerShot;
 
             if (_currentHeat >= _so.Stats.MaxHeat)
             {
@@ -346,20 +346,20 @@ namespace FPS
             return _so.Id;
         }
 
-        private void DecreaseAmmo(ProjectileSO _projectileSO)
+        private void DecreaseAmmo()
         {
             if (_ammoHandler != null)
-                _ammoHandler.DecreaseAmmo(_projectileSO, _so);
+                _ammoHandler.DecreaseAmmo(_so);
         }
 
         public bool HasAmmo()
         {
-            return _ammoHandler == null || _ammoHandler.HasAmmo(_so.ProjectileSO, _so);
+            return _ammoHandler == null || _ammoHandler.HasAmmo(_so);
         }
 
         public string GetAmmoString()
         {
-            return _ammoHandler == null ? $"-" : $"{_ammoHandler.GetAmmoQuantity(_so.ProjectileSO)}";
+            return _ammoHandler == null || _so.Stats.AmmoPerShot <= 0 ? $"-" : $"{_ammoHandler.GetAmmoAmount(_so.AmmoSO)}";
         }
 
         public int GetDamage()

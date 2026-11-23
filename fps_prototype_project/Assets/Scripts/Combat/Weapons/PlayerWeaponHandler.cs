@@ -190,7 +190,7 @@ namespace FPS
 
             for (int i = 0; i < _count; i++)
             {
-                var _ammoSO = _weaponsList[i].SO.ProjectileSO.AmmoSO;
+                var _ammoSO = _weaponsList[i].SO.AmmoSO;
                 _list.Add(_ammoSO);
             }
 

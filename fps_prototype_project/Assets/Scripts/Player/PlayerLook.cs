@@ -40,9 +40,6 @@ namespace FPS
 
         private void LateUpdate()
         {
-            //transform.rotation = Quaternion.Euler(0f, _yaw, 0f);
-            //_cameraPivot.localRotation = Quaternion.Euler(_pitch, 0f, 0f);
-
             RecoverRecoil();
             transform.rotation = Quaternion.Euler(0f, _yaw + _recoilYaw, 0f);
             _cameraPivot.localRotation = Quaternion.Euler(_pitch - _recoilPitch, 0f, 0f);

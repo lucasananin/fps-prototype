@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace FPS
 {
-    [CreateAssetMenu(fileName = "Weapon_", menuName = "Scriptable Objects/Combat/Weapon Data")]
+    [CreateAssetMenu(fileName = "Weapon_", menuName = "Scriptable Objects/Combat/Weapon")]
     public class WeaponSO : ScriptableObject
     {
         [SerializeField] private string _id = "warmaker_mg";
@@ -10,6 +10,7 @@ namespace FPS
         [SerializeField] private string _typeName = "Machine Gun";
         [SerializeField] private WeaponBehaviour _prefab = null;
         [SerializeField] private ProjectileSO _projectileSO = null;
+        [SerializeField] private AmmoSO _ammoSO = null;
         [SerializeField] private WeaponStats _stats = null;
         [SerializeField] private ProjectileStats _projectileStats = null;
 
@@ -18,6 +19,7 @@ namespace FPS
         public string DisplayName { get => _displayName; }
         public string TypeName { get => _typeName; }
         public ProjectileSO ProjectileSO { get => _projectileSO; }
+        public AmmoSO AmmoSO { get => _ammoSO; set => _ammoSO = value; }
         public WeaponStats Stats { get => _stats; }
         public ProjectileStats ProjectileStats { get => _projectileStats; }
 

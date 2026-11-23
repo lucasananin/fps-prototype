@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f14e637aab3370b47aa55ddc7dacfa99, type: 3}
   m_Name: _Weapon_
   m_EditorClassIdentifier: Assembly-CSharp::WeaponSO
-  _id: warmaker_mg
-  _displayName: Warmaker
+  _id: war-maker-mg
+  _displayName: War Maker
   _typeName: Machine Gun
   _prefab: {fileID: 0}
   _projectileSO: {fileID: 11400000, guid: fcfe4f87d4505f1458db5baac5371813, type: 2}
+  _ammoSO: {fileID: 11400000, guid: 1ab1f6580a9f376408bfb1cc3170c25a, type: 2}
   _stats:
     _triggerType: 1
     _damage: 1
