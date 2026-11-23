@@ -49,31 +49,62 @@ namespace FPS
             return _totalFireRate + _stats.BurstRate + _offset;
         }
 
+        //public Quaternion GetProjectileRotation(int _projectileIndex)
+        //{
+        //    if (_stats.ShootAngle <= 0)
+        //    {
+        //        return Quaternion.identity;
+        //    }
+
+        //    float _halfAngle = _stats.ShootAngle / 2f;
+
+        //    if (_stats.ArcMode == ShootArcMode.Spread && _stats.ProjectilesPerShot > 1)
+        //    {
+        //        // Evenly spaced pellets around the edge of the cone
+        //        float _roll = 360f / _stats.ProjectilesPerShot * _projectileIndex;
+        //        return Quaternion.AngleAxis(_roll, Vector3.forward)
+        //             * Quaternion.AngleAxis(_halfAngle, Vector3.up);
+        //    }
+        //    else
+        //    {
+        //        // Random direction inside the cone
+        //        float _roll = Random.Range(0f, 360f);
+        //        float _tilt = _halfAngle * Mathf.Sqrt(Random.value);
+        //        return Quaternion.AngleAxis(_roll, Vector3.forward)
+        //             * Quaternion.AngleAxis(_tilt, Vector3.up);
+        //    }
+        //}
+
+
         public Quaternion GetProjectileRotation(int _projectileIndex)
         {
-            if (_stats.ShootAngle <= 0)
-            {
-                return Quaternion.identity;
-            }
+            return GetProjectileRotation(_stats.BaseShootAngle, _projectileIndex);
+        }
 
-            float _halfAngle = _stats.ShootAngle / 2f;
+        public Quaternion GetProjectileRotation(float _shootAngle, int _projectileIndex)
+        {
+            if (_shootAngle <= 0)
+                return Quaternion.identity;
+
+            float _halfAngle = _shootAngle / 2f;
 
             if (_stats.ArcMode == ShootArcMode.Spread && _stats.ProjectilesPerShot > 1)
             {
-                // Evenly spaced pellets around the edge of the cone
                 float _roll = 360f / _stats.ProjectilesPerShot * _projectileIndex;
+
                 return Quaternion.AngleAxis(_roll, Vector3.forward)
                      * Quaternion.AngleAxis(_halfAngle, Vector3.up);
             }
             else
             {
-                // Random direction inside the cone
                 float _roll = Random.Range(0f, 360f);
                 float _tilt = _halfAngle * Mathf.Sqrt(Random.value);
+
                 return Quaternion.AngleAxis(_roll, Vector3.forward)
                      * Quaternion.AngleAxis(_tilt, Vector3.up);
             }
         }
+
     }
 
     [System.Serializable]
@@ -100,8 +131,12 @@ namespace FPS
         [SerializeField, Range(1f, 9f)] float _overheatDecreaseMultiplier = 2f;
 
         [Header("// Precision")]
-        [SerializeField, Range(0, 135)] float _shootAngle = 0;
         [SerializeReference] ShootArcMode _arcMode = default;
+        [SerializeField, Range(0, 135)] float _baseShootAngle = 0;
+        [SerializeField, Range(0f, 10f)] float _shootAngleIncreasePerShot = 0.5f;
+        [SerializeField, Range(0f, 135f)] float _maxAdditionalShootAngle = 10f;
+        [SerializeField, Range(0f, 2f)] float _precisionRecoveryDelay = 0.2f;
+        [SerializeField, Range(0f, 180f)] float _precisionRecoverySpeed = 30f;
 
         [Header("// Ammo")]
         [SerializeField, Range(1, 36)] int _projectilesPerShot = 1;
@@ -122,8 +157,14 @@ namespace FPS
         public float HeatDecreasePerSecond { get => _heatDecreasePerSecond; }
         public float OverheatDuration { get => _overheatDuration; }
         public float OverheatDecreaseMultiplier { get => _overheatDecreaseMultiplier; }
-        public float ShootAngle { get => _shootAngle; }
+
         public ShootArcMode ArcMode { get => _arcMode; }
+        public float BaseShootAngle { get => _baseShootAngle; }
+        public float ShootAngleIncreasePerShot { get => _shootAngleIncreasePerShot; }
+        public float MaxAdditionalShootAngle { get => _maxAdditionalShootAngle; }
+        public float PrecisionRecoveryDelay { get => _precisionRecoveryDelay; }
+        public float PrecisionRecoverySpeed { get => _precisionRecoverySpeed; }
+
         public int ProjectilesPerShot { get => _projectilesPerShot; }
         public int AmmoPerShot { get => _ammoPerShot; }
         public bool AutoFireOnFullCharge { get => _autoFireOnFullCharge; }

@@ -728,7 +728,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FPS.WeaponBehaviour
   _so: {fileID: 11400000, guid: 30c87dd07fe5cf9449fd235de1550b5b, type: 2}
   _muzzle: {fileID: 1240224901}
-  _alignToScreenCenter: 1
 --- !u!1 &243951542
 GameObject:
   m_ObjectHideFlags: 0
@@ -2461,9 +2460,6 @@ MonoBehaviour:
     m_Bits: 65
   _weaponsList:
   - {fileID: 201753454}
-  _currentWeapon: {fileID: 0}
-  _currentWeaponIndex: 0
-  _isWaitingChangeWeaponDelay: 0
 --- !u!114 &787119906
 MonoBehaviour:
   m_ObjectHideFlags: 0

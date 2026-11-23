@@ -29,6 +29,9 @@ namespace FPS
         protected bool _isBursting = false;
         protected bool _isHoldingTrigger = false;
 
+        public float _currentShootAngle = 0f;
+        public float _precisionRecoveryTimer = 0f;
+
         public event UnityAction<WeaponBehaviour> OnInit = null;
         public event UnityAction OnShoot = null;
         public event UnityAction OnPullTrigger = null;
@@ -42,6 +45,7 @@ namespace FPS
         {
             _nextFire = _so.Stats.FireRate;
             _nextBurst = _so.Stats.BurstRate;
+            _currentShootAngle = _so.Stats.BaseShootAngle;
         }
 
         private void FixedUpdate()
@@ -53,6 +57,7 @@ namespace FPS
         {
             DecreaseHeat();
             UpdateOverheatState();
+            UpdatePrecision();
         }
 
         public virtual void Init(WeaponInitInfo _info)
@@ -167,6 +172,7 @@ namespace FPS
             PrepareProjectile(_so.ProjectileSO);
             DecreaseAmmo(_so.ProjectileSO);
             IncreaseHeat(_so.Stats.HeatPerShot);
+            IncreaseShootAngle();
             OnShoot?.Invoke();
         }
 
@@ -177,7 +183,7 @@ namespace FPS
             for (int i = 0; i < _so.Stats.ProjectilesPerShot; i++)
             {
                 var _position = CalculateProjectilePosition(_projectileSO);
-                var _rotation = _aimRotation * _so.GetProjectileRotation(i);
+                var _rotation = _aimRotation * _so.GetProjectileRotation(_currentShootAngle, i);
                 var _projectileInstance = Instantiate(_projectileSO.Prefab, _position, _rotation);
                 var _shootInfo = new ShootInfo(_entitySource, this, _projectileSO);
                 _projectileInstance.Init(_shootInfo);
@@ -220,6 +226,43 @@ namespace FPS
             Vector3 _zOffset = transform.forward * _spawnOffset.z;
             return _muzzle.position + _xOffset + _yOffset + _zOffset;
         }
+
+        #region PRECISION
+
+        protected virtual void IncreaseShootAngle()
+        {
+            var _stats = _so.Stats;
+
+            float _maxAngle = _stats.BaseShootAngle + _stats.MaxAdditionalShootAngle;
+
+            _currentShootAngle = Mathf.Min(
+                _currentShootAngle + _stats.ShootAngleIncreasePerShot,
+                _maxAngle
+            );
+
+            _precisionRecoveryTimer = 0f;
+        }
+
+        protected virtual void UpdatePrecision()
+        {
+            var _stats = _so.Stats;
+
+            if (_currentShootAngle <= _stats.BaseShootAngle)
+                return;
+
+            _precisionRecoveryTimer += Time.deltaTime;
+
+            if (_precisionRecoveryTimer < _stats.PrecisionRecoveryDelay)
+                return;
+
+            _currentShootAngle = Mathf.MoveTowards(
+                _currentShootAngle,
+                _stats.BaseShootAngle,
+                _stats.PrecisionRecoverySpeed * Time.deltaTime
+            );
+        }
+
+        #endregion
 
         protected void UpdateChargeTimer()
         {
@@ -334,6 +377,8 @@ namespace FPS
             _isCharging = false;
             _isBursting = false;
             _isHoldingTrigger = false;
+            _currentShootAngle = _so.Stats.BaseShootAngle;
+            _precisionRecoveryTimer = 0f;
         }
     }
 }
