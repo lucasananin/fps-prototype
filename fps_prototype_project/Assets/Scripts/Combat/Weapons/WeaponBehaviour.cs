@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -20,6 +21,7 @@ namespace FPS
         protected float _nextFire = 0;
         protected float _chargeTimer = 0f;
         protected bool _isCharging = false;
+        protected int _magazineAmmo = 0;
 
         protected float _currentHeat = 0f;
         protected float _overheatTimer = 0f;
@@ -47,6 +49,11 @@ namespace FPS
             _nextFire = _so.Stats.FireRate;
             _nextBurst = _so.Stats.BurstRate;
             _currentSpreadAngle = _so.Stats.BaseSpreadAngle;
+        }
+
+        private void Start()
+        {
+            TryReloadMagazine();
         }
 
         private void FixedUpdate()
@@ -117,7 +124,7 @@ namespace FPS
 
                 UpdateChargeTimer();
 
-                if (!HasAmmo()) return;
+                if (!HasAmmoToShoot()) return;
                 if (_isOverheated) return;
                 if (!HasEnoughChargeTimer()) return;
 
@@ -132,7 +139,7 @@ namespace FPS
         {
             if (_so.IsTriggerEqual(TriggerType.Semi_Automatic))
             {
-                if (!HasAmmo()) return;
+                if (!HasAmmoToShoot()) return;
                 if (_isOverheated) return;
                 if (_nextBurst < _so.Stats.BurstRate) return;
 
@@ -161,6 +168,11 @@ namespace FPS
                 _chargeTimer = 0;
             }
 
+            if (_so.UseMagazine())
+            {
+                TryReloadMagazine();
+            }
+
             _isCharging = false;
             _isHoldingTrigger = false;
             OnReleaseTrigger?.Invoke();
@@ -172,7 +184,7 @@ namespace FPS
         {
             _nextFire = 0;
             PrepareProjectile(_so.ProjectileSO);
-            DecreaseAmmo();
+            DecreaseAmmoOnShoot();
             IncreaseHeat();
             IncreaseShootAngle();
 
@@ -346,20 +358,57 @@ namespace FPS
             return _so.Id;
         }
 
-        private void DecreaseAmmo()
+        private void DecreaseAmmoOnShoot()
         {
-            if (_ammoHandler != null)
-                _ammoHandler.DecreaseAmmo(_so);
+            if (_ammoHandler == null) return;
+
+            if (_so.UseMagazine())
+                _magazineAmmo -= _so.Stats.AmmoPerShot;
+            else
+                _ammoHandler.DecreaseAmmo(_so.AmmoSO, _so.Stats.AmmoPerShot);
         }
 
-        public bool HasAmmo()
+        public bool HasAmmoToShoot()
         {
-            return _ammoHandler == null || _ammoHandler.HasAmmo(_so);
+            if (_ammoHandler == null) return true;
+
+            return _so.UseMagazine() ? _magazineAmmo >= _so.Stats.AmmoPerShot : _ammoHandler.HasAmmo(_so);
         }
 
         public string GetAmmoString()
         {
-            return _ammoHandler == null || _so.Stats.AmmoPerShot <= 0 ? $"-" : $"{_ammoHandler.GetAmmoAmount(_so.AmmoSO)}";
+            if (_ammoHandler == null) return $"NULL";
+            if (_so.Stats.AmmoPerShot <= 0) return $"-";
+
+            if (_so.UseMagazine())
+            {
+                var _reserveAmmo = _ammoHandler.InfiniteAmmo ? 999 : _ammoHandler.GetAmmoAmount(_so.AmmoSO);
+                return $"{_magazineAmmo}/{_reserveAmmo}";
+            }
+
+            return $"{_ammoHandler.GetAmmoAmount(_so.AmmoSO)}";
+        }
+
+        [ContextMenu("ReloadMagazine()")]
+        public void TryReloadMagazine()
+        {
+            if (!_so.UseMagazine()) return;
+            if (!_ammoHandler.HasAmmo(_so)) return;
+
+            StopAllCoroutines();
+            StartCoroutine(Reload_Routine());
+            // Play reload animation.
+        }
+
+        private IEnumerator Reload_Routine()
+        {
+            yield return new WaitForSeconds(1f);
+
+            var _amountNeeded = Mathf.Abs(_magazineAmmo - _so.Stats.MagazineSize);
+            var _amountAvailable = Mathf.Abs(_ammoHandler.GetAmmoAmount(_so.AmmoSO) - _magazineAmmo);
+            var _finalAmount = _amountNeeded <= _amountAvailable ? _amountNeeded : _amountAvailable;
+            _magazineAmmo += _finalAmount;
+            _ammoHandler.DecreaseAmmo(_so.AmmoSO, _finalAmount);
         }
 
         public int GetDamage()

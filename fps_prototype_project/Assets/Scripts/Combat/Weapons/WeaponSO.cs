@@ -19,7 +19,7 @@ namespace FPS
         public string DisplayName { get => _displayName; }
         public string TypeName { get => _typeName; }
         public ProjectileSO ProjectileSO { get => _projectileSO; }
-        public AmmoSO AmmoSO { get => _ammoSO; set => _ammoSO = value; }
+        public AmmoSO AmmoSO { get => _ammoSO; }
         public WeaponStats Stats { get => _stats; }
         public ProjectileStats ProjectileStats { get => _projectileStats; }
 
@@ -83,6 +83,11 @@ namespace FPS
         {
             return Random.Range(-_stats.RecoilYaw, _stats.RecoilYaw);
         }
+
+        public bool UseMagazine()
+        {
+            return _stats.MagazineSize > 0;
+        }
     }
 
     [System.Serializable]
@@ -123,6 +128,7 @@ namespace FPS
         [Header("// Ammo")]
         [SerializeField, Range(1, 36)] int _projectilesPerShot = 1;
         [SerializeField, Range(0, 36)] int _ammoPerShot = 1;
+        [SerializeField, Range(0, 200)] int _magazineSize = 0;
 
         [Header("// Semi-Auto Properties")]
         [SerializeField] bool _autoFireOnFullCharge = false;
@@ -152,6 +158,7 @@ namespace FPS
 
         public int ProjectilesPerShot { get => _projectilesPerShot; }
         public int AmmoPerShot { get => _ammoPerShot; }
+        public int MagazineSize { get => _magazineSize; }
         public bool AutoFireOnFullCharge { get => _autoFireOnFullCharge; }
         public float BurstRate { get => _burstRate; }
         public int ShotsPerBurst { get => _shotsPerBurst; }

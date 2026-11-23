@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FPS.AmmoSO
   _id: default
   _displayName: Default
-  _maxAmount: 999
+  _maxAmount: 30

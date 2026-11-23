@@ -16,6 +16,7 @@ namespace FPS
         public event UnityAction OnAmmoChanged = null;
 
         public List<AmmoModel> Models { get => _models; }
+        public bool InfiniteAmmo { get => _infiniteAmmo; }
 
         private void Awake()
         {
@@ -95,12 +96,12 @@ namespace FPS
         //    return _newList.Count > 0 ? _newList : _list;
         //}
 
-        public void DecreaseAmmo(WeaponSO _weaponSO)
+        public void DecreaseAmmo(AmmoSO _ammoSO, int _amount)
         {
             if (_infiniteAmmo) return;
 
-            var _model = GetModel(_weaponSO.AmmoSO);
-            _model?.DecreaseQuantity(_weaponSO.Stats.AmmoPerShot);
+            var _model = GetModel(_ammoSO);
+            _model?.DecreaseQuantity(_amount);
             OnAmmoChanged?.Invoke();
         }
 

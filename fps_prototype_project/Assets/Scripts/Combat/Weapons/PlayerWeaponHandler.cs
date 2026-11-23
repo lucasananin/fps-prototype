@@ -164,6 +164,11 @@ namespace FPS
             return _weaponsList.Count > 1;
         }
 
+        public WeaponBehaviour GetCurrentWeapon()
+        {
+            return _currentWeapon;
+        }
+
         public WeaponBehaviour GetFirstWeapon()
         {
             if (_currentWeapon == null) return null;
