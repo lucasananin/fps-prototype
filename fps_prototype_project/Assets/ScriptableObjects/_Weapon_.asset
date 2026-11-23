@@ -35,7 +35,7 @@ MonoBehaviour:
     _precisionRecoveryDelay: 0.2
     _precisionRecoverySpeed: 30
     _recoilPitch: 1
-    _recoilYaw: 0
+    _recoilYaw: 1
     _projectilesPerShot: 1
     _ammoPerShot: 1
     _autoFireOnFullCharge: 0

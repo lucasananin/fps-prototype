@@ -177,7 +177,7 @@ namespace FPS
             IncreaseShootAngle();
 
             if (_playerLook != null)
-                _playerLook.ApplyRecoil(_so.Stats.RecoilPitch, _so.Stats.RecoilYaw);
+                _playerLook.ApplyRecoil(_so.Stats.RecoilPitch, _so.GetRandomYaw());
 
             OnShoot?.Invoke();
         }

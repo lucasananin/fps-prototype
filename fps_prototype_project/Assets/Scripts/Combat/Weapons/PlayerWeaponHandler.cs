@@ -16,7 +16,6 @@ namespace FPS
         [SerializeField] private float _maxAimDistance = 100f;
         [SerializeField] private LayerMask _aimMask = default;
 
-
         [Header("// Debug")]
         [SerializeField] List<WeaponBehaviour> _weaponsList = null;
 

@@ -76,6 +76,11 @@ namespace FPS
                      * Quaternion.AngleAxis(_tilt, Vector3.up);
             }
         }
+
+        public float GetRandomYaw()
+        {
+            return Random.Range(-_stats.RecoilYaw, _stats.RecoilYaw);
+        }
     }
 
     [System.Serializable]
@@ -111,7 +116,7 @@ namespace FPS
 
         [Header("// Recoil")]
         [SerializeField, Range(0f, 10f)] float _recoilPitch = 1f;
-        [SerializeField, Range(-5f, 5f)] float _recoilYaw = 0f;
+        [SerializeField, Range(0, 5f)] float _recoilYaw = 0f;
 
         [Header("// Ammo")]
         [SerializeField, Range(1, 36)] int _projectilesPerShot = 1;
