@@ -29,7 +29,7 @@ namespace FPS
         protected bool _isBursting = false;
         protected bool _isHoldingTrigger = false;
 
-        public float _currentShootAngle = 0f;
+        public float _currentSpreadAngle = 0f;
         public float _precisionRecoveryTimer = 0f;
 
         public event UnityAction<WeaponBehaviour> OnInit = null;
@@ -45,7 +45,7 @@ namespace FPS
         {
             _nextFire = _so.Stats.FireRate;
             _nextBurst = _so.Stats.BurstRate;
-            _currentShootAngle = _so.Stats.BaseShootAngle;
+            _currentSpreadAngle = _so.Stats.BaseSpreadAngle;
         }
 
         private void FixedUpdate()
@@ -183,7 +183,7 @@ namespace FPS
             for (int i = 0; i < _so.Stats.ProjectilesPerShot; i++)
             {
                 var _position = CalculateProjectilePosition(_projectileSO);
-                var _rotation = _aimRotation * _so.GetProjectileRotation(_currentShootAngle, i);
+                var _rotation = _aimRotation * _so.GetProjectileRotation(_currentSpreadAngle, i);
                 var _projectileInstance = Instantiate(_projectileSO.Prefab, _position, _rotation);
                 var _shootInfo = new ShootInfo(_entitySource, this, _projectileSO);
                 _projectileInstance.Init(_shootInfo);
@@ -233,10 +233,10 @@ namespace FPS
         {
             var _stats = _so.Stats;
 
-            float _maxAngle = _stats.BaseShootAngle + _stats.MaxAdditionalShootAngle;
+            float _maxAngle = _stats.BaseSpreadAngle + _stats.MaxAdditionalShootAngle;
 
-            _currentShootAngle = Mathf.Min(
-                _currentShootAngle + _stats.ShootAngleIncreasePerShot,
+            _currentSpreadAngle = Mathf.Min(
+                _currentSpreadAngle + _stats.ShootAngleIncreasePerShot,
                 _maxAngle
             );
 
@@ -247,7 +247,7 @@ namespace FPS
         {
             var _stats = _so.Stats;
 
-            if (_currentShootAngle <= _stats.BaseShootAngle)
+            if (_currentSpreadAngle <= _stats.BaseSpreadAngle)
                 return;
 
             _precisionRecoveryTimer += Time.deltaTime;
@@ -255,9 +255,9 @@ namespace FPS
             if (_precisionRecoveryTimer < _stats.PrecisionRecoveryDelay)
                 return;
 
-            _currentShootAngle = Mathf.MoveTowards(
-                _currentShootAngle,
-                _stats.BaseShootAngle,
+            _currentSpreadAngle = Mathf.MoveTowards(
+                _currentSpreadAngle,
+                _stats.BaseSpreadAngle,
                 _stats.PrecisionRecoverySpeed * Time.deltaTime
             );
         }
@@ -377,7 +377,7 @@ namespace FPS
             _isCharging = false;
             _isBursting = false;
             _isHoldingTrigger = false;
-            _currentShootAngle = _so.Stats.BaseShootAngle;
+            _currentSpreadAngle = _so.Stats.BaseSpreadAngle;
             _precisionRecoveryTimer = 0f;
         }
     }

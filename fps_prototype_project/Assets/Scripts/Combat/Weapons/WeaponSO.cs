@@ -75,10 +75,9 @@ namespace FPS
         //    }
         //}
 
-
         public Quaternion GetProjectileRotation(int _projectileIndex)
         {
-            return GetProjectileRotation(_stats.BaseShootAngle, _projectileIndex);
+            return GetProjectileRotation(_stats.BaseSpreadAngle, _projectileIndex);
         }
 
         public Quaternion GetProjectileRotation(float _shootAngle, int _projectileIndex)
@@ -88,7 +87,7 @@ namespace FPS
 
             float _halfAngle = _shootAngle / 2f;
 
-            if (_stats.ArcMode == ShootArcMode.Spread && _stats.ProjectilesPerShot > 1)
+            if (_stats.SpreadMode == ShootSpreadMode.Evenly && _stats.ProjectilesPerShot > 1)
             {
                 float _roll = 360f / _stats.ProjectilesPerShot * _projectileIndex;
 
@@ -104,7 +103,6 @@ namespace FPS
                      * Quaternion.AngleAxis(_tilt, Vector3.up);
             }
         }
-
     }
 
     [System.Serializable]
@@ -131,10 +129,10 @@ namespace FPS
         [SerializeField, Range(1f, 9f)] float _overheatDecreaseMultiplier = 2f;
 
         [Header("// Precision")]
-        [SerializeReference] ShootArcMode _arcMode = default;
-        [SerializeField, Range(0, 135)] float _baseShootAngle = 0;
-        [SerializeField, Range(0f, 10f)] float _shootAngleIncreasePerShot = 0.5f;
-        [SerializeField, Range(0f, 135f)] float _maxAdditionalShootAngle = 10f;
+        [SerializeReference] ShootSpreadMode _spreadMode = default;
+        [SerializeField, Range(0, 135)] float _baseSpreadAngle = 0;
+        [SerializeField, Range(0f, 10f)] float _spreadIncreasePerShot = 1f;
+        [SerializeField, Range(0f, 135f)] float _maxAdditionalSpread = 10f;
         [SerializeField, Range(0f, 2f)] float _precisionRecoveryDelay = 0.2f;
         [SerializeField, Range(0f, 180f)] float _precisionRecoverySpeed = 30f;
 
@@ -158,10 +156,10 @@ namespace FPS
         public float OverheatDuration { get => _overheatDuration; }
         public float OverheatDecreaseMultiplier { get => _overheatDecreaseMultiplier; }
 
-        public ShootArcMode ArcMode { get => _arcMode; }
-        public float BaseShootAngle { get => _baseShootAngle; }
-        public float ShootAngleIncreasePerShot { get => _shootAngleIncreasePerShot; }
-        public float MaxAdditionalShootAngle { get => _maxAdditionalShootAngle; }
+        public ShootSpreadMode SpreadMode { get => _spreadMode; }
+        public float BaseSpreadAngle { get => _baseSpreadAngle; }
+        public float ShootAngleIncreasePerShot { get => _spreadIncreasePerShot; }
+        public float MaxAdditionalShootAngle { get => _maxAdditionalSpread; }
         public float PrecisionRecoveryDelay { get => _precisionRecoveryDelay; }
         public float PrecisionRecoverySpeed { get => _precisionRecoverySpeed; }
 
@@ -178,9 +176,9 @@ namespace FPS
         Full_Automatic,
     }
 
-    public enum ShootArcMode
+    public enum ShootSpreadMode
     {
         Random,
-        Spread,
+        Evenly,
     }
 }
