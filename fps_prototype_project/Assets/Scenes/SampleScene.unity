@@ -2359,6 +2359,9 @@ MonoBehaviour:
   _gamepadSensitivity: 100
   _minPitch: -90
   _maxPitch: 90
+  _recoilRecoverySpeed: 1
+  _maxRecoilPitch: 15
+  _maxRecoilYaw: 5
 --- !u!114 &787119901
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -49,32 +49,6 @@ namespace FPS
             return _totalFireRate + _stats.BurstRate + _offset;
         }
 
-        //public Quaternion GetProjectileRotation(int _projectileIndex)
-        //{
-        //    if (_stats.ShootAngle <= 0)
-        //    {
-        //        return Quaternion.identity;
-        //    }
-
-        //    float _halfAngle = _stats.ShootAngle / 2f;
-
-        //    if (_stats.ArcMode == ShootArcMode.Spread && _stats.ProjectilesPerShot > 1)
-        //    {
-        //        // Evenly spaced pellets around the edge of the cone
-        //        float _roll = 360f / _stats.ProjectilesPerShot * _projectileIndex;
-        //        return Quaternion.AngleAxis(_roll, Vector3.forward)
-        //             * Quaternion.AngleAxis(_halfAngle, Vector3.up);
-        //    }
-        //    else
-        //    {
-        //        // Random direction inside the cone
-        //        float _roll = Random.Range(0f, 360f);
-        //        float _tilt = _halfAngle * Mathf.Sqrt(Random.value);
-        //        return Quaternion.AngleAxis(_roll, Vector3.forward)
-        //             * Quaternion.AngleAxis(_tilt, Vector3.up);
-        //    }
-        //}
-
         public Quaternion GetProjectileRotation(int _projectileIndex)
         {
             return GetProjectileRotation(_stats.BaseSpreadAngle, _projectileIndex);
@@ -89,8 +63,8 @@ namespace FPS
 
             if (_stats.SpreadMode == ShootSpreadMode.Evenly && _stats.ProjectilesPerShot > 1)
             {
+                // Evenly spaced pellets around the edge of the cone
                 float _roll = 360f / _stats.ProjectilesPerShot * _projectileIndex;
-
                 return Quaternion.AngleAxis(_roll, Vector3.forward)
                      * Quaternion.AngleAxis(_halfAngle, Vector3.up);
             }
@@ -98,7 +72,6 @@ namespace FPS
             {
                 float _roll = Random.Range(0f, 360f);
                 float _tilt = _halfAngle * Mathf.Sqrt(Random.value);
-
                 return Quaternion.AngleAxis(_roll, Vector3.forward)
                      * Quaternion.AngleAxis(_tilt, Vector3.up);
             }
@@ -136,6 +109,10 @@ namespace FPS
         [SerializeField, Range(0f, 2f)] float _precisionRecoveryDelay = 0.2f;
         [SerializeField, Range(0f, 180f)] float _precisionRecoverySpeed = 30f;
 
+        [Header("// Recoil")]
+        [SerializeField, Range(0f, 10f)] float _recoilPitch = 1f;
+        [SerializeField, Range(-5f, 5f)] float _recoilYaw = 0f;
+
         [Header("// Ammo")]
         [SerializeField, Range(1, 36)] int _projectilesPerShot = 1;
         [SerializeField, Range(0, 36)] int _ammoPerShot = 1;
@@ -162,6 +139,9 @@ namespace FPS
         public float MaxAdditionalShootAngle { get => _maxAdditionalSpread; }
         public float PrecisionRecoveryDelay { get => _precisionRecoveryDelay; }
         public float PrecisionRecoverySpeed { get => _precisionRecoverySpeed; }
+
+        public float RecoilPitch { get => _recoilPitch; }
+        public float RecoilYaw { get => _recoilYaw; }
 
         public int ProjectilesPerShot { get => _projectilesPerShot; }
         public int AmmoPerShot { get => _ammoPerShot; }

@@ -28,12 +28,14 @@ MonoBehaviour:
     _heatDecreasePerSecond: 10
     _overheatDuration: 2
     _overheatDecreaseMultiplier: 2
-    _arcMode: 0
-    _baseShootAngle: 0
-    _shootAngleIncreasePerShot: 2
-    _maxAdditionalShootAngle: 10
+    _spreadMode: 0
+    _baseSpreadAngle: 0
+    _spreadIncreasePerShot: 1
+    _maxAdditionalSpread: 10
     _precisionRecoveryDelay: 0.2
     _precisionRecoverySpeed: 30
+    _recoilPitch: 1
+    _recoilYaw: 0
     _projectilesPerShot: 1
     _ammoPerShot: 1
     _autoFireOnFullCharge: 0

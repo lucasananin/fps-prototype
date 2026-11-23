@@ -15,6 +15,7 @@ namespace FPS
 
         protected AbstractEntity _entitySource = null;
         protected AmmoHandler _ammoHandler = null;
+        private PlayerLook _playerLook;
 
         protected float _nextFire = 0;
         protected float _chargeTimer = 0f;
@@ -29,8 +30,8 @@ namespace FPS
         protected bool _isBursting = false;
         protected bool _isHoldingTrigger = false;
 
-        public float _currentSpreadAngle = 0f;
-        public float _precisionRecoveryTimer = 0f;
+        protected float _currentSpreadAngle = 0f;
+        protected float _precisionRecoveryTimer = 0f;
 
         public event UnityAction<WeaponBehaviour> OnInit = null;
         public event UnityAction OnShoot = null;
@@ -67,6 +68,7 @@ namespace FPS
             _camera = _info.camera;
             _aimMask = _info.aimMask;
             _maxAimDistance = _info.maxAimDistance;
+            _playerLook = _camera != null ? _entitySource.GetComponent<PlayerLook>() : null;
             OnInit?.Invoke(this);
         }
 
@@ -173,6 +175,10 @@ namespace FPS
             DecreaseAmmo(_so.ProjectileSO);
             IncreaseHeat(_so.Stats.HeatPerShot);
             IncreaseShootAngle();
+
+            if (_playerLook != null)
+                _playerLook.ApplyRecoil(_so.Stats.RecoilPitch, _so.Stats.RecoilYaw);
+
             OnShoot?.Invoke();
         }
 
