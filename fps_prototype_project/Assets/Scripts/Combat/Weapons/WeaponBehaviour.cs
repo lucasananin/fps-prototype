@@ -22,6 +22,7 @@ namespace FPS
         protected float _chargeTimer = 0f;
         protected bool _isCharging = false;
         protected int _magazineAmmo = 0;
+        protected bool _isReloading = false;
 
         protected float _currentHeat = 0f;
         protected float _overheatTimer = 0f;
@@ -137,6 +138,8 @@ namespace FPS
 
         public virtual void PullTrigger()
         {
+            if (_isReloading) return;
+
             if (_so.IsTriggerEqual(TriggerType.Semi_Automatic))
             {
                 if (!HasAmmoToShoot()) return;
@@ -170,13 +173,14 @@ namespace FPS
                 _chargeTimer = 0;
             }
 
+            _isCharging = false;
+            _isHoldingTrigger = false;
+
             if (IsMagazineEmpty())
             {
                 TryReloadMagazine();
             }
 
-            _isCharging = false;
-            _isHoldingTrigger = false;
             OnReleaseTrigger?.Invoke();
         }
 
@@ -360,6 +364,8 @@ namespace FPS
             return _so.Id;
         }
 
+        #region AMMO
+
         private void DecreaseAmmoOnShoot()
         {
             if (_ammoHandler == null) return;
@@ -396,6 +402,7 @@ namespace FPS
         {
             if (IsMagazineFull()) return;
             if (!_ammoHandler.HasAmmo(_so)) return;
+            if (_isHoldingTrigger) return;
 
             StopAllCoroutines();
             StartCoroutine(Reload_Routine());
@@ -404,7 +411,9 @@ namespace FPS
 
         private IEnumerator Reload_Routine()
         {
+            _isReloading = true;
             yield return new WaitForSeconds(1f);
+            _isReloading = false;
 
             var _amountNeeded = Mathf.Abs(_magazineAmmo - _so.Stats.MagazineSize);
             var _amountAvailable = Mathf.Abs(_ammoHandler.GetAmmoAmount(_so.AmmoSO) - _magazineAmmo);
@@ -422,6 +431,8 @@ namespace FPS
         {
             return _so.UseMagazine() && _magazineAmmo == 0;
         }
+
+        #endregion
 
         public int GetDamage()
         {
