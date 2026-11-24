@@ -48,6 +48,11 @@ namespace FPS
             {
                 ReleaseTrigger();
             }
+
+            if (_input.ReloadAction.WasPerformedThisFrame())
+            {
+                _currentWeapon.TryReloadMagazine();
+            }
         }
 
         public void PullTrigger()

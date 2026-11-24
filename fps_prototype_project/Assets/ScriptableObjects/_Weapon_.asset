@@ -39,7 +39,7 @@ MonoBehaviour:
     _recoilYaw: 1
     _projectilesPerShot: 1
     _ammoPerShot: 1
-    _magazineSize: 10
+    _magazineSize: 0
     _autoFireOnFullCharge: 0
     _burstRate: 0
     _shotsPerBurst: 0

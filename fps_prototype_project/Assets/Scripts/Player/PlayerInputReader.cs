@@ -15,6 +15,7 @@ namespace FPS
 
         [Header("Combat Actions")]
         [SerializeField] private InputActionReference _shootAction;
+        [SerializeField] private InputActionReference _reloadAction;
 
         private bool _jumpPressed;
         private bool _dashPressed;
@@ -26,6 +27,7 @@ namespace FPS
         public bool SprintHeld { get; private set; }
         public bool CrouchHeld { get; private set; }
         public InputAction ShootAction { get => _shootAction.action; }
+        public InputAction ReloadAction { get => _reloadAction.action; }
 
         private void OnEnable()
         {
@@ -36,6 +38,7 @@ namespace FPS
             _dashAction.action.Enable();
             _crouchAction.action.Enable();
             _shootAction.action.Enable();
+            _reloadAction.action.Enable();
 
             _jumpAction.action.performed += OnJumpPressed;
             _jumpAction.action.canceled += OnJumpReleased;
@@ -50,6 +53,7 @@ namespace FPS
             _dashAction.action.Disable();
             _crouchAction.action.Disable();
             _shootAction.action.Disable();
+            _reloadAction.action.Disable();
 
             _jumpAction.action.performed -= OnJumpPressed;
             _jumpAction.action.canceled -= OnJumpReleased;

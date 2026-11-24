@@ -728,7 +728,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FPS.WeaponBehaviour
   _so: {fileID: 11400000, guid: 30c87dd07fe5cf9449fd235de1550b5b, type: 2}
   _muzzle: {fileID: 1240224901}
-  _currentAmmo: 0
 --- !u!1 &243951542
 GameObject:
   m_ObjectHideFlags: 0
@@ -2521,6 +2520,7 @@ MonoBehaviour:
   _dashAction: {fileID: -4615856112904115012, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   _crouchAction: {fileID: 7040659881675835329, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   _shootAction: {fileID: -6009732267310363289, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  _reloadAction: {fileID: 5157265176744547811, guid: 052faaac586de48259a63d0c4782560b, type: 3}
 --- !u!143 &787119902
 CharacterController:
   m_ObjectHideFlags: 0
@@ -2628,7 +2628,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15b8dd201c82bcc479fe90ae576775e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FPS.AmmoHandler
-  _infiniteAmmo: 0
+  _infiniteAmmo: 1
   _initialAmmoPercentage: 10
   _soList:
   - {fileID: 11400000, guid: 1ab1f6580a9f376408bfb1cc3170c25a, type: 2}

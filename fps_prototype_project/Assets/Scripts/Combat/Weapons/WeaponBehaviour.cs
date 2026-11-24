@@ -47,14 +47,7 @@ namespace FPS
 
         protected virtual void Awake()
         {
-            _nextFire = _so.Stats.FireRate;
-            _nextBurst = _so.Stats.BurstRate;
-            _currentSpreadAngle = _so.Stats.BaseSpreadAngle;
-        }
-
-        private void Start()
-        {
-            TryReloadMagazine();
+            ResetRuntimeValues();
         }
 
         private void FixedUpdate()
@@ -77,6 +70,10 @@ namespace FPS
             _aimMask = _info.aimMask;
             _maxAimDistance = _info.maxAimDistance;
             _playerLook = _camera != null ? _entitySource.GetComponent<PlayerLook>() : null;
+
+            if (IsMagazineEmpty())
+                TryReloadMagazine();
+
             OnInit?.Invoke(this);
         }
 
@@ -153,9 +150,7 @@ namespace FPS
             }
 
             if (_so.HasChargeTime())
-            {
                 _isCharging = true;
-            }
 
             _isHoldingTrigger = true;
             OnPullTrigger?.Invoke();
@@ -177,9 +172,7 @@ namespace FPS
             _isHoldingTrigger = false;
 
             if (IsMagazineEmpty())
-            {
                 TryReloadMagazine();
-            }
 
             OnReleaseTrigger?.Invoke();
         }
@@ -388,13 +381,14 @@ namespace FPS
             if (_ammoHandler == null) return $"NULL";
             if (_so.Stats.AmmoPerShot <= 0) return $"-";
 
+            var _reserveAmmo = _ammoHandler.InfiniteAmmo ? 999 : _ammoHandler.GetAmmoAmount(_so.AmmoSO);
+
             if (_so.UseMagazine())
             {
-                var _reserveAmmo = _ammoHandler.InfiniteAmmo ? 999 : _ammoHandler.GetAmmoAmount(_so.AmmoSO);
                 return $"{_magazineAmmo}/{_reserveAmmo}";
             }
 
-            return $"{_ammoHandler.GetAmmoAmount(_so.AmmoSO)}";
+            return $"{_reserveAmmo}";
         }
 
         [ContextMenu("ReloadMagazine()")]
