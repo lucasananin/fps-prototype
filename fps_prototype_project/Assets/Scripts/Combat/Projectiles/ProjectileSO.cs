@@ -54,6 +54,9 @@ namespace FPS
         [SerializeField, Range(0, 100)] int _bounceChance = 0;
         [SerializeField, Range(1, 3)] int _maxBounces = 1;
         //[SerializeField] TagCollection _bounceTags = null;
+        [SerializeField] bool _useGravity = true;
+        [SerializeField, Range(0, 10)] float _gravityMultiplier = 1f; // 0 = straight line, 1 = realistic, >1 = heavier
+        [SerializeField, Range(0f, 1f)] float _bounceEnergyKept = 1f; // optional: lose speed on bounces
 
         [Header("// Hitscan - Properties")]
         [SerializeField, Range(0f, 99f)] float _maxCastDistance = 0f;
@@ -82,6 +85,9 @@ namespace FPS
         public int BounceChance { get => _bounceChance; }
         public int MaxBounces { get => _maxBounces; }
         //public TagCollection BounceTags { get => _bounceTags; }
+        public bool UseGravity { get => _useGravity; }
+        public float GravityMultiplier { get => _gravityMultiplier; }
+        public float BounceEnergyKept { get => _bounceEnergyKept; }
         public float MaxCastDistance { get => _maxCastDistance; }
         //public float MaxGuidedRadius { get => _maxGuidedRadius; }
     }

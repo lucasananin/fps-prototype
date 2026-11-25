@@ -54,4 +54,7 @@ MonoBehaviour:
     _moveSpeed: 100
     _bounceChance: 0
     _maxBounces: 1
+    _useGravity: 1
+    _gravityMultiplier: 1
+    _bounceEnergyKept: 1
     _maxCastDistance: 0

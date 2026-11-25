@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using lutilities.Damage;
 using lutilities.General;
@@ -18,14 +17,13 @@ namespace FPS
         [SerializeField] SphereCollider _dummyCollider = null;
         //[SerializeField] Transform _renderTransform = null;
 
-        [Header("// Gravity")]
-        [SerializeField] bool _useGravity = true;
-        [SerializeField] float _gravityMultiplier = 1f;   // 0 = straight line, 1 = realistic, >1 = heavier
-        [SerializeField, Range(0f, 1f)] float _bounceEnergyKept = 1f; // optional: lose speed on bounces
-
-        private Vector3 _velocity;
+        //[Header("// Gravity")]
+        //[SerializeField] bool _useGravity = true;
+        //[SerializeField] float _gravityMultiplier = 1f;   // 0 = straight line, 1 = realistic, >1 = heavier
+        //[SerializeField, Range(0f, 1f)] float _bounceEnergyKept = 1f; // optional: lose speed on bounces
 
         private readonly RaycastHit[] _results = new RaycastHit[9];
+        private Vector3 _velocity;
 
         private void Awake()
         {
@@ -46,8 +44,8 @@ namespace FPS
 
         private void CheckCollisions()
         {
-            if (_useGravity)
-                _velocity += _gravityMultiplier * Time.fixedDeltaTime * Physics.gravity;
+            if (_stats.UseGravity)
+                _velocity += _stats.GravityMultiplier * Time.fixedDeltaTime * Physics.gravity;
 
             var _displacement = _velocity * Time.fixedDeltaTime;
             var _hits = Physics.SphereCastNonAlloc(transform.position, _dummyCollider.radius, _displacement.normalized, _results, _displacement.magnitude, _so.LayerMask);
@@ -167,7 +165,7 @@ namespace FPS
 
         private void Reflect(RaycastHit _raycastHit)
         {
-            _velocity = Vector3.Reflect(_velocity, _raycastHit.normal) * _bounceEnergyKept;
+            _velocity = Vector3.Reflect(_velocity, _raycastHit.normal) * _stats.BounceEnergyKept;
             transform.rotation = Quaternion.LookRotation(_velocity.normalized, Vector3.up);
             IncreaseBounceCount();
         }
