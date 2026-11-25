@@ -22,6 +22,7 @@ MonoBehaviour:
     _triggerType: 1
     _damage: 1
     _explosiveDamage: 1
+    _lastShotMultiplier: 5
     _fireRate: 0.1
     _chargeDuration: 0
     _maxHeat: 0
@@ -36,7 +37,7 @@ MonoBehaviour:
     _precisionRecoveryDelay: 0.2
     _precisionRecoverySpeed: 30
     _recoilPitch: 1
-    _recoilYaw: 1
+    _recoilYaw: 0
     _projectilesPerShot: 1
     _ammoPerShot: 1
     _magazineSize: 0

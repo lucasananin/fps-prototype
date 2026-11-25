@@ -51,7 +51,7 @@ namespace FPS
 
             if (_input.ReloadAction.WasPerformedThisFrame())
             {
-                _currentWeapon.TryReloadMagazine();
+                _currentWeapon.ReloadMagazine();
             }
         }
 

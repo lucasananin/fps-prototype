@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
@@ -72,7 +73,7 @@ namespace FPS
             _playerLook = _camera != null ? _entitySource.GetComponent<PlayerLook>() : null;
 
             if (IsMagazineEmpty())
-                TryReloadMagazine();
+                ReloadMagazine();
 
             OnInit?.Invoke(this);
         }
@@ -172,7 +173,7 @@ namespace FPS
             _isHoldingTrigger = false;
 
             if (IsMagazineEmpty())
-                TryReloadMagazine();
+                ReloadMagazine();
 
             OnReleaseTrigger?.Invoke();
         }
@@ -202,9 +203,16 @@ namespace FPS
                 var _position = CalculateProjectilePosition(_projectileSO);
                 var _rotation = _aimRotation * _so.GetProjectileRotation(_currentSpreadAngle, i);
                 var _projectileInstance = Instantiate(_projectileSO.Prefab, _position, _rotation);
-                var _shootInfo = new ShootInfo(_entitySource, this, _projectileSO);
+                var _shootInfo = new ShootInfo(_entitySource, this, _projectileSO, IsLastShot());
                 _projectileInstance.Init(_shootInfo);
             }
+        }
+
+        private bool IsLastShot()
+        {
+            var _isLastShotBeforeOverheat = _currentHeat + _so.Stats.HeatPerShot >= _so.Stats.MaxHeat;
+            var _isLastShotFromMagazine = _so.UseMagazine() ? _magazineAmmo - _so.Stats.AmmoPerShot <= 0 : _ammoHandler.GetAmmoAmount(_so.AmmoSO) - _so.Stats.AmmoPerShot <= 0;
+            return _isLastShotBeforeOverheat || _isLastShotFromMagazine;
         }
 
         protected Quaternion GetAimRotation()
@@ -391,8 +399,7 @@ namespace FPS
             return $"{_reserveAmmo}";
         }
 
-        [ContextMenu("ReloadMagazine()")]
-        public void TryReloadMagazine()
+        public void ReloadMagazine()
         {
             if (IsMagazineFull()) return;
             if (!_ammoHandler.HasAmmo(_so)) return;
@@ -436,6 +443,11 @@ namespace FPS
         public int GetExplosiveDamage()
         {
             return _so.Stats.ExplosiveDamage;
+        }
+
+        public int GetLastShotDamage()
+        {
+            return _so.Stats.Damage * _so.Stats.LastShotMultiplier;
         }
 
         public float GetCastProjectileMaxDistance()

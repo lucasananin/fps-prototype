@@ -59,7 +59,6 @@ namespace FPS
                 if (HasChanceToToBounce() && _healthBehaviour == null /*&& HasBounceTag(_colliderHit.gameObject)*/)
                 {
                     TryBounce(_raycastHit);
-                    //TryDamage(_healthBehaviour, _raycastHit);
 
                     if (HasReacheMaxBounceCount())
                     {
@@ -133,8 +132,8 @@ namespace FPS
             if (_healthBehaviour == null) return;
 
             var _damage = _shootInfo.GetDamage();
-            //var _damageModel = new DamageInfo(_shootInfo.EntitySource, _raycastHit.point, _damage);
-            var _damageInfo = new DamageInfo(_damage, gameObject, _shootInfo.EntitySource.gameObject, _raycastHit.point, transform.forward);
+            var _instigator = _shootInfo.EntitySource.gameObject;
+            var _damageInfo = new DamageInfo(_damage, gameObject, _instigator, _raycastHit.point, transform.forward);
             _healthBehaviour.TakeDamage(_damageInfo);
         }
 
