@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace FPS
@@ -22,9 +23,31 @@ namespace FPS
             this._isLastShot = _isLastShot;
         }
 
-        public int GetDamage()
+        internal int GetDamage(float _hitDistance)
+        {
+            var _finalValue = 0;
+            _finalValue += GetBaseDamage();
+            _finalValue *= GetDistanceDamage(_hitDistance);
+            return _finalValue;
+        }
+
+        private int GetBaseDamage()
         {
             return _isLastShot ? _weaponSource.GetLastShotDamage() : _weaponSource.GetDamage();
+        }
+
+        public int GetDistanceDamage(float _hitDistance)
+        {
+            var _stats = _weaponSource.SO.Stats;
+
+            // Outside the bonus area: no bonus
+            if (_hitDistance > _stats.MaxBonusDistance) return 1;
+
+            // 0 at the edge of the bonus area, 1 at point blank
+            float t = 1f - (_hitDistance / _stats.MaxBonusDistance);
+            float _multiplier = Mathf.Lerp(_stats.MinDamageMultiplier, _stats.MaxDamageMultiplier, t);
+
+            return (int)_multiplier;
         }
 
         public int GetExplosiveDamage()

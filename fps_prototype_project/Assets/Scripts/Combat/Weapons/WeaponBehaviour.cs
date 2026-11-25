@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
@@ -447,7 +446,7 @@ namespace FPS
 
         public int GetLastShotDamage()
         {
-            return _so.Stats.Damage * _so.Stats.LastShotMultiplier;
+            return (int)(_so.Stats.Damage * _so.Stats.LastShotMultiplier);
         }
 
         public float GetCastProjectileMaxDistance()

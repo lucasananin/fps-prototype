@@ -99,7 +99,10 @@ namespace FPS
         [Header("// Damage")]
         [SerializeField, Range(0, 99)] int _damage = 1;
         [SerializeField, Range(0, 99)] int _explosiveDamage = 1;
-        [SerializeField, Range(1, 10)] int _lastShotMultiplier = 1;
+        [SerializeField, Range(1, 10)] float _lastShotMultiplier = 1;
+        [SerializeField, Range(0, 10)] float maxBonusDistance = 0f;
+        [SerializeField, Range(1, 10)] float minDamageMultiplier = 1f;  // at the edge of the bonus range
+        [SerializeField, Range(1, 10)] float maxDamageMultiplier = 10f;  // at point blank
 
         [Header("// Fire Rate")]
         [SerializeField, Range(0.01f, 2f)] float _fireRate = 0.1f;
@@ -139,7 +142,10 @@ namespace FPS
         public TriggerType TriggerType { get => _triggerType; }
         public int Damage { get => _damage; }
         public int ExplosiveDamage { get => _explosiveDamage; }
-        public int LastShotMultiplier { get => _lastShotMultiplier; }
+        public float MaxBonusDistance { get => maxBonusDistance; }
+        public float MinDamageMultiplier { get => minDamageMultiplier; }
+        public float MaxDamageMultiplier { get => maxDamageMultiplier; }
+        public float LastShotMultiplier { get => _lastShotMultiplier; }
         public float FireRate { get => _fireRate; }
         public float ChargeDuration { get => _chargeDuration; }
         public float MaxHeat { get => _maxHeat; }

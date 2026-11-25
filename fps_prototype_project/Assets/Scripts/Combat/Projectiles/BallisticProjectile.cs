@@ -131,8 +131,8 @@ namespace FPS
         {
             if (_healthBehaviour == null) return;
 
-            var _damage = _shootInfo.GetDamage();
             var _instigator = _shootInfo.EntitySource.gameObject;
+            var _damage = _shootInfo.GetDamage(_raycastHit.distance);
             var _damageInfo = new DamageInfo(_damage, gameObject, _instigator, _raycastHit.point, transform.forward);
             _healthBehaviour.TakeDamage(_damageInfo);
         }

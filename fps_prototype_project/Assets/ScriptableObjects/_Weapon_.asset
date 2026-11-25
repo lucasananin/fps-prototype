@@ -23,6 +23,9 @@ MonoBehaviour:
     _damage: 1
     _explosiveDamage: 1
     _lastShotMultiplier: 5
+    maxBonusDistance: 5
+    minDamageMultiplier: 1
+    maxDamageMultiplier: 10
     _fireRate: 0.1
     _chargeDuration: 0
     _maxHeat: 0
