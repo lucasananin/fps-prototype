@@ -333,6 +333,7 @@ MonoBehaviour:
     _entitySource: {fileID: 0}
     _weaponSource: {fileID: 0}
     _projectileSO: {fileID: 0}
+    _isLastShot: 0
   _so: {fileID: 0}
   _stats:
     _destroyTimeRange: {x: 0, y: 0}
@@ -347,10 +348,13 @@ MonoBehaviour:
   _pierceCount: 0
   _bounceCount: 0
   _tagsList: []
+  _collidersHit: []
+  _moveSpeed: 0
   _rb: {fileID: 7911047677401967070}
   _dummyCollider: {fileID: 6908632021696668795}
-  _collidersHit: []
-  _speedMultiplier: 0
+  _useGravity: 1
+  _gravityMultiplier: 1
+  _bounceEnergyKept: 1
 --- !u!114 &-5598941562624617484
 MonoBehaviour:
   m_ObjectHideFlags: 0
