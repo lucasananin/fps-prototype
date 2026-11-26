@@ -15,6 +15,11 @@ namespace lutilities.TagCollections
             return _tags != null && Array.Exists(_tags, t => t.Value == tag);
         }
 
+        public bool CompareTag(Component gameObject)
+        {
+            return _tags != null && Array.Exists(_tags, t => gameObject.CompareTag(t.Value));
+        }
+
         public List<string> GetTags()
         {
             if (_tags == null)

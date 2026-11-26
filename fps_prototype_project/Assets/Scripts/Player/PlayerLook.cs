@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace FPS
 {
@@ -7,6 +8,7 @@ namespace FPS
         [Header("References")]
         [SerializeField] private PlayerInputReader _inputReader;
         [SerializeField] private Transform _cameraPivot;
+        [SerializeField] private AimFriction _aimFriction;
 
         [Header("Look Settings")]
         [SerializeField] private float _mouseSensitivity = 0.1f;
@@ -48,10 +50,13 @@ namespace FPS
         private void HandleLook()
         {
             Vector2 lookInput = _inputReader.LookInput;
+            bool isMouse = _inputReader.IsLookInputFromMouse;
 
-            float deltaTime = _inputReader.IsLookInputFromMouse ? 1f : Time.deltaTime;
+            float deltaTime = isMouse ? 1f : Time.deltaTime;
 
-            var sensitivity = _inputReader.IsLookInputFromMouse ? _mouseSensitivity : _gamepadSensitivity;
+            var sensitivity = isMouse ? _mouseSensitivity : _gamepadSensitivity;
+            sensitivity *= GetFrictionMultiplier(isMouse);
+
             float horizontalInput = lookInput.x * sensitivity * deltaTime;
             float verticalInput = lookInput.y * sensitivity * deltaTime;
 
@@ -59,6 +64,21 @@ namespace FPS
             _pitch -= verticalInput;
 
             _pitch = Mathf.Clamp(_pitch, _minPitch, _maxPitch);
+        }
+
+        // Aim friction only applies to gamepad input.
+        private float GetFrictionMultiplier(bool isMouse)
+        {
+            if (_aimFriction == null)
+                return 1f;
+
+            if (isMouse)
+            {
+                _aimFriction.ResetFriction();
+                return 1f;
+            }
+
+            return _aimFriction.GetFriction();
         }
 
         public void ApplyRecoil(float _pitchAmount, float _yawAmount)
