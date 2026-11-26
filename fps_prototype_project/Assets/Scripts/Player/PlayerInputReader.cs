@@ -17,6 +17,7 @@ namespace FPS
         [SerializeField] private InputActionReference _shootAction;
         [SerializeField] private InputActionReference _reloadAction;
 
+        private ControlSchemeTracker _controlSchemeTracker = null;
         private bool _jumpPressed;
         private bool _dashPressed;
 
@@ -28,6 +29,11 @@ namespace FPS
         public bool CrouchHeld { get; private set; }
         public InputAction ShootAction { get => _shootAction.action; }
         public InputAction ReloadAction { get => _reloadAction.action; }
+
+        private void Awake()
+        {
+            _controlSchemeTracker = FindFirstObjectByType<ControlSchemeTracker>();
+        }
 
         private void OnEnable()
         {
@@ -71,7 +77,7 @@ namespace FPS
         private void Update()
         {
             LookInput = _lookAction.action.ReadValue<Vector2>();
-            IsLookInputFromMouse = _lookAction.action.activeControl?.device is Mouse;
+            IsLookInputFromMouse = _controlSchemeTracker.IsKeyboardMouse;
             Move = _moveAction.action.ReadValue<Vector2>();
             SprintHeld = _sprintAction.action.IsPressed();
             CrouchHeld = _crouchAction.action.IsPressed();

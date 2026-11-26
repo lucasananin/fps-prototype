@@ -79,11 +79,9 @@ namespace FPS
             if (isMouse)
             {
                 _aimFriction.ResetFriction();
-                Debug.Log($"// _friction");
                 return 1f;
             }
 
-            Debug.Log($"// _friction");
             return _aimFriction.GetFriction();
         }
 
@@ -96,11 +94,9 @@ namespace FPS
             if (isMouse)
             {
                 _aimStickiness.ResetStickiness();
-                Debug.Log($"// _stickiness");
                 return Vector2.zero;
             }
 
-            Debug.Log($"// _stickiness");
             return _aimStickiness.GetStickyDelta();
         }
 
