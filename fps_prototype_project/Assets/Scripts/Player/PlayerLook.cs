@@ -1,14 +1,14 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace FPS
 {
     public class PlayerLook : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] private PlayerInputReader _inputReader;
         [SerializeField] private Transform _cameraPivot;
+        [SerializeField] private PlayerInputReader _inputReader;
         [SerializeField] private AimFriction _aimFriction;
+        [SerializeField] private AimStickiness _aimStickiness;
 
         [Header("Look Settings")]
         [SerializeField] private float _mouseSensitivity = 0.1f;
@@ -63,6 +63,10 @@ namespace FPS
             _yaw += horizontalInput;
             _pitch -= verticalInput;
 
+            Vector2 stickyDelta = GetStickyDelta(isMouse);
+            _yaw += stickyDelta.x;
+            _pitch += stickyDelta.y;
+
             _pitch = Mathf.Clamp(_pitch, _minPitch, _maxPitch);
         }
 
@@ -75,10 +79,29 @@ namespace FPS
             if (isMouse)
             {
                 _aimFriction.ResetFriction();
+                Debug.Log($"// _friction");
                 return 1f;
             }
 
+            Debug.Log($"// _friction");
             return _aimFriction.GetFriction();
+        }
+
+        // Aim stickiness only applies to gamepad input.
+        private Vector2 GetStickyDelta(bool isMouse)
+        {
+            if (_aimStickiness == null)
+                return Vector2.zero;
+
+            if (isMouse)
+            {
+                _aimStickiness.ResetStickiness();
+                Debug.Log($"// _stickiness");
+                return Vector2.zero;
+            }
+
+            Debug.Log($"// _stickiness");
+            return _aimStickiness.GetStickyDelta();
         }
 
         public void ApplyRecoil(float _pitchAmount, float _yawAmount)
