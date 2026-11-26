@@ -245,6 +245,7 @@ GameObject:
   - component: {fileID: 6908632021696668795}
   - component: {fileID: 4686243445508069299}
   - component: {fileID: -5598941562624617484}
+  - component: {fileID: 8967048097756396531}
   m_Layer: 0
   m_Name: Ballistic_Base
   m_TagString: Untagged
@@ -338,10 +339,17 @@ MonoBehaviour:
   _stats:
     _destroyTimeRange: {x: 0, y: 0}
     _explosionRadius: 0
+    _explodeOnHitAny: 0
+    _explodeOnHitEntity: 0
+    _explodeOnStop: 0
+    _explodeOnTimerEnd: 0
     _maxPierceCount: 1
     _moveSpeed: 100
     _bounceChance: 0
     _maxBounces: 1
+    _useGravity: 1
+    _gravityMultiplier: 1
+    _bounceEnergyKept: 1
     _maxCastDistance: 0
   _timeUntilDestroy: 0
   _destroyTimer: 0
@@ -352,9 +360,6 @@ MonoBehaviour:
   _moveSpeed: 0
   _rb: {fileID: 7911047677401967070}
   _dummyCollider: {fileID: 6908632021696668795}
-  _useGravity: 1
-  _gravityMultiplier: 1
-  _bounceEnergyKept: 1
 --- !u!114 &-5598941562624617484
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -369,3 +374,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FPS.HitVfx
   _projectile: {fileID: 4686243445508069299}
   _defaultVfx: {fileID: 6247187283104546242, guid: 927650eeeca980649abd2e5929786bf7, type: 3}
+--- !u!114 &8967048097756396531
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8658762403338029607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09540979fad88b44f8404024c42350a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FPS.ProjectileExplosion
+  _projectile: {fileID: 4686243445508069299}
+  _simpleExplosionPrefab: {fileID: 4820556221068932533, guid: fe8a7994ce66182479498e4cc6471c94, type: 3}
+  _particleSystemPrefab: {fileID: 0}

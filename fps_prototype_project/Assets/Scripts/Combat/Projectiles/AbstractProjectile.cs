@@ -31,6 +31,7 @@ namespace FPS
         //const string PROJECTILE_TAG = "Projectile";
 
         public ShootInfo ShootModel { get => _shootInfo; }
+        public ProjectileStats Stats { get => _stats; }
         public float TimeUntilDestroy { get => _timeUntilDestroy; }
 
         public virtual void Init(ShootInfo _shootInfoValue)

@@ -29,7 +29,11 @@ namespace FPS
         //[SerializeField] bool _canDamageProjectiles = false;
 
         [Header("// Explosion")]
-        [SerializeField, Range(0f, 99)] float _explosionRadius = 0f;
+        [SerializeField, Range(0, 10)] float _explosionRadius = 0f;
+        [SerializeField] bool _explodeOnHitAny = false;
+        [SerializeField] bool _explodeOnHitEntity = false;
+        [SerializeField] bool _explodeOnStop = false;
+        [SerializeField] bool _explodeOnTimerEnd = false;
         //[SerializeField] bool _canDamageSource = false;
 
         [Header("// Piercing")]
@@ -89,6 +93,10 @@ namespace FPS
         public float GravityMultiplier { get => _gravityMultiplier; }
         public float BounceEnergyKept { get => _bounceEnergyKept; }
         public float MaxCastDistance { get => _maxCastDistance; }
+        public bool ExplodeOnHitAny { get => _explodeOnHitAny; }
+        public bool ExplodeOnHitEntity { get => _explodeOnHitEntity; }
+        public bool ExplodeOnStop { get => _explodeOnStop; }
+        public bool ExplodeOnTimerEnd { get => _explodeOnTimerEnd; }
         //public float MaxGuidedRadius { get => _maxGuidedRadius; }
     }
 }
