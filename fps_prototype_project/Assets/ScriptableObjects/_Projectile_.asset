@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: _Projectile_
   m_EditorClassIdentifier: Assembly-CSharp::FPS.ProjectileSO
   _prefab: {fileID: 4686243445508069299, guid: 32ee2b97e357af74dbd466dd0ddf491c, type: 3}
-  _ammoSO: {fileID: 0}
   _layerMask:
     serializedVersion: 2
     m_Bits: 65
@@ -23,4 +22,4 @@ MonoBehaviour:
   _obstacleLayerMask:
     serializedVersion: 2
     m_Bits: 1
-  _spawnPositionOffset: {x: 0, y: 0}
+  _spawnPositionOffset: {x: 0, y: 0, z: 0}

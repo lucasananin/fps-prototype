@@ -49,7 +49,7 @@ MonoBehaviour:
     _shotsPerBurst: 0
   _projectileStats:
     _destroyTimeRange: {x: 3, y: 3}
-    _explosionRadius: 99
+    _explosionRadius: 3
     _explodeOnHitAny: 0
     _explodeOnHitEntity: 0
     _explodeOnStop: 0
@@ -61,4 +61,4 @@ MonoBehaviour:
     _useGravity: 1
     _gravityMultiplier: 1
     _bounceEnergyKept: 1
-    _maxCastDistance: 0
+    _maxCastDistance: 100

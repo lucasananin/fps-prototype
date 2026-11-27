@@ -145,6 +145,16 @@ namespace FPS
         //    }
         //}
 
+        protected void TryDamage(Health _health, RaycastHit _raycastHit)
+        {
+            if (_health == null) return;
+
+            var _instigator = _shootInfo.EntitySource.gameObject;
+            var _damage = _shootInfo.GetDamage(_raycastHit.distance);
+            var _damageInfo = new DamageInfo(_damage, gameObject, _instigator, _raycastHit.point, transform.forward);
+            _health.TakeDamage(_damageInfo);
+        }
+
         public float GetExplosionRadius()
         {
             return _stats.ExplosionRadius;

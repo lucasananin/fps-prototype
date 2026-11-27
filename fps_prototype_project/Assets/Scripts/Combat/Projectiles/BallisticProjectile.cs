@@ -12,7 +12,7 @@ namespace FPS
         //[SerializeField] float _accelerationTime = 0f;
         [SerializeField] float _moveSpeed = 0f;
 
-        [Header("// Ballistic Projectile - Properties")]
+        [Header("// Ballistic - Properties")]
         [SerializeField] Rigidbody _rb = null;
         [SerializeField] SphereCollider _dummyCollider = null;
         //[SerializeField] Transform _renderTransform = null;
@@ -53,7 +53,7 @@ namespace FPS
 
             if (_hits > 1)
             {
-                CollectionMethods.SortByDistance(_results, transform.position, hit => hit.collider == null ? Vector3.positiveInfinity : hit.transform.position);
+                CollectionMethods.SortByDistance(_results, transform.position, hit => hit.collider == null ? Vector3.positiveInfinity : hit.point);
             }
 
             for (int i = 0; i < _hits; i++)
@@ -63,9 +63,9 @@ namespace FPS
 
                 if (HasHitSource(_colliderHit.gameObject)) continue;
                 if (_collidersHit.Contains(_colliderHit)) continue;
-                if (_colliderHit.TryGetComponent(out Health _healthBehaviour) && !HasDamageableTag(_colliderHit.gameObject)) continue;
+                if (_colliderHit.TryGetComponent(out Health _health) && !HasDamageableTag(_colliderHit.gameObject)) continue;
 
-                if (HasChanceToToBounce() && _healthBehaviour == null /*&& HasBounceTag(_colliderHit.gameObject)*/)
+                if (HasChanceToToBounce() && _health == null /*&& HasBounceTag(_colliderHit.gameObject)*/)
                 {
                     TryBounce(_raycastHit);
 
@@ -79,11 +79,11 @@ namespace FPS
                 else
                 {
                     _collidersHit.Add(_colliderHit);
-                    TryDamage(_healthBehaviour, _raycastHit);
+                    TryDamage(_health, _raycastHit);
                     SendRaycastHitEvent(_raycastHit);
                     IncreasePierceCount();
 
-                    if (HasReachedMaxPierceCount() || _healthBehaviour == null /*|| HasBlockPierceTag(_colliderHit.gameObject)*/)
+                    if (HasReachedMaxPierceCount() || _health == null /*|| HasBlockPierceTag(_colliderHit.gameObject)*/)
                     {
                         DestroyThis();
                         break;
@@ -140,16 +140,6 @@ namespace FPS
         //        DestroyByStop();
         //    }
         //}
-
-        private void TryDamage(Health _healthBehaviour, RaycastHit _raycastHit)
-        {
-            if (_healthBehaviour == null) return;
-
-            var _instigator = _shootInfo.EntitySource.gameObject;
-            var _damage = _shootInfo.GetDamage(_raycastHit.distance);
-            var _damageInfo = new DamageInfo(_damage, gameObject, _instigator, _raycastHit.point, transform.forward);
-            _healthBehaviour.TakeDamage(_damageInfo);
-        }
 
         private void TryBounce(RaycastHit _raycastHit)
         {

@@ -1,0 +1,125 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8658762403338029607
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4502096699222621156}
+  - component: {fileID: 6908632021696668795}
+  - component: {fileID: 4789089623247058025}
+  - component: {fileID: -5598941562624617484}
+  - component: {fileID: 8967048097756396531}
+  m_Layer: 0
+  m_Name: Hitscan_Base
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4502096699222621156
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8658762403338029607}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &6908632021696668795
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8658762403338029607}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4789089623247058025
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8658762403338029607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5954ee3a911b9084690f4e873e8cfff0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HitscanProjectile
+  _shootInfo:
+    _entitySource: {fileID: 0}
+    _weaponSource: {fileID: 0}
+    _projectileSO: {fileID: 0}
+    _isLastShot: 0
+  _so: {fileID: 0}
+  _stats:
+    _destroyTimeRange: {x: 0, y: 0}
+    _explosionRadius: 0
+    _explodeOnHitAny: 0
+    _explodeOnHitEntity: 0
+    _explodeOnStop: 0
+    _explodeOnTimerEnd: 0
+    _maxPierceCount: 1
+    _moveSpeed: 100
+    _bounceChance: 0
+    _maxBounces: 1
+    _useGravity: 1
+    _gravityMultiplier: 1
+    _bounceEnergyKept: 1
+    _maxCastDistance: 0
+  _timeUntilDestroy: 0
+  _destroyTimer: 0
+  _pierceCount: 0
+  _bounceCount: 0
+  _tagsList: []
+  _dummyCollider: {fileID: 6908632021696668795}
+--- !u!114 &-5598941562624617484
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8658762403338029607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1150792bfdf32124bbd0a12464215314, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FPS.HitVfx
+  _projectile: {fileID: 4789089623247058025}
+  _defaultVfx: {fileID: 6247187283104546242, guid: 927650eeeca980649abd2e5929786bf7, type: 3}
+--- !u!114 &8967048097756396531
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8658762403338029607}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09540979fad88b44f8404024c42350a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FPS.ProjectileExplosion
+  _projectile: {fileID: 4789089623247058025}
+  _simpleExplosionPrefab: {fileID: 4820556221068932533, guid: fe8a7994ce66182479498e4cc6471c94, type: 3}

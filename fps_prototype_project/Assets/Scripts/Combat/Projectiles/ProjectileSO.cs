@@ -63,7 +63,7 @@ namespace FPS
         [SerializeField, Range(0f, 1f)] float _bounceEnergyKept = 1f; // optional: lose speed on bounces
 
         [Header("// Hitscan - Properties")]
-        [SerializeField, Range(0f, 99f)] float _maxCastDistance = 0f;
+        [SerializeField, Range(0f, 100f)] float _maxCastDistance = 0f;
 
         //[Header("// Guided Projectile: Properties")]
         //[SerializeField, Range(0f, 9f)] float _maxGuidedRadius = 0f;

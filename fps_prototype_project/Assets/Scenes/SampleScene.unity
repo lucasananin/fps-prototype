@@ -2781,7 +2781,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15b8dd201c82bcc479fe90ae576775e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FPS.AmmoHandler
-  _infiniteAmmo: 1
+  _infiniteAmmo: 0
   _initialAmmoPercentage: 10
   _soList:
   - {fileID: 11400000, guid: 1ab1f6580a9f376408bfb1cc3170c25a, type: 2}
